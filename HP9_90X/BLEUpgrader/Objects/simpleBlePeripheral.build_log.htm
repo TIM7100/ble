@@ -28,16 +28,12 @@ Project File Date:  09/08/2026
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
 compiling UpgraderHp9Serial.c...
-compiling simpleBLEPeripheral.c...
-source\simpleBLEPeripheral.c(702): warning:  #111-D: statement is unreachable
-      if (events & SBP_RSET_CHIP_EVT)
-source\simpleBLEPeripheral.c: 1 warning, 0 errors
 linking...
-Program Size: Code=62786 RO-data=4926 RW-data=2456 ZI-data=26476  
+Program Size: Code=65238 RO-data=5046 RW-data=2624 ZI-data=26528  
 FromELF: creating hex file...
 After Build - User command #1: fromelf.exe .\Objects\simpleBlePeripheral.axf --i32combined --output .\bin\simpleBlePeripheral.hex
 After Build - User command #2: fromelf -c -a -d -e -v -o simpleBlePeripheral.asm ./Objects/simpleBlePeripheral.axf
-".\Objects\simpleBlePeripheral.axf" - 0 Error(s), 1 Warning(s).
+".\Objects\simpleBlePeripheral.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -58,9 +54,9 @@ Package Vendor: ARM
    * Component: ARM::CMSIS:CORE:5.6.0
 
    * Component: ARM::Device:Startup:1.2.2
-      Source file:   Device/ARM/ARMCM0/Source/system_ARMCM0.c
       Include file:  Device/ARM/ARMCM0/Include/ARMCM0.h
       Source file:   Device/ARM/ARMCM0/Source/ARM/startup_ARMCM0.s
+      Source file:   Device/ARM/ARMCM0/Source/system_ARMCM0.c
 Build Time Elapsed:  00:00:01
 </pre>
 </body>

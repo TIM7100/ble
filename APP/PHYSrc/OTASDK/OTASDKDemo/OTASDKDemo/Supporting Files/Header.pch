@@ -1,0 +1,43 @@
+//
+//  Header.h
+//  OTASDKDemo
+//
+//  Created by Yang on 2018/10/28.
+//  Copyright © 2018 phy. All rights reserved.
+//
+
+#ifndef Header_pch
+#define Header_pch
+
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+
+#import "BaseDefinition.h"//DSKit
+#import "NotificationDefine.h"
+#import "URLDefine.h"
+#import "ColorDefine.h"
+#import "FontDefile.h"
+#import "Constants.h"
+#import "Masonry.h"
+#import "BaseDefinition.h"
+#import "UIAlertView+Blocks.h"
+#import "SVProgressHUD.h"
+#import "MBProgressHUD.h"
+#import "BleUUIDDefine.h"
+
+#import <OTASDK/OTASDK.h>
+
+/**
+ *  配置自定义的测试Log
+ */
+#ifdef DEBUG
+#define MYLog(...) NSLog(__VA_ARGS__)
+#else
+#define MYLog(...)
+#endif
+
+#endif
+
+#endif /* Header_h */

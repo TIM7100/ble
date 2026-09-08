@@ -67,5 +67,3 @@
 .\objects\simplebleperipheral.o: source\UpgraderHp9Serial.h
 .\objects\simplebleperipheral.o: source\random.h
 .\objects\simplebleperipheral.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\simplebleperipheral.o: ..\components\profiles\ppsp\ppsp_serv.h
-.\objects\simplebleperipheral.o: ..\components\profiles\ppsp\ppsp_impl.h

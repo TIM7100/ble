@@ -49,3 +49,4 @@
 .\objects\osal_simplebleperipheral.o: ..\components\profiles\Roles\peripheral.h
 .\objects\osal_simplebleperipheral.o: source\simpleBLEPeripheral.h
 .\objects\osal_simplebleperipheral.o: source\halPeripheral.h
+.\objects\osal_simplebleperipheral.o: ..\components\OTAEVENT\otaevents.h

@@ -1,0 +1,13 @@
+.svn/
+*.svn-base
+
+# Keil MDK
+*.bak
+*.uvguix*
+*.uvopt
+JLinkLog.txt
+*.dep
+*.o
+*.axf
+*.elf
+*.bin

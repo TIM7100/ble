@@ -340,7 +340,7 @@
               <MiscControls>-DADV_NCONN_CFG=0x01  -DADV_CONN_CFG=0x02  -DSCAN_CFG=0x04   -DINIT_CFG=0x08   -DBROADCASTER_CFG=0x01 -DOBSERVER_CFG=0x02  -DPERIPHERAL_CFG=0x04  -DCENTRAL_CFG=0x08</MiscControls>
               <Define>CFG_CP  OSAL_CBTIMER_NUM_TASKS=1 MTU_SIZE=247 HOST_CONFIG=4 HCI_TL_NONE=1 ENABLE_LOG_ROM_=0  _BUILD_FOR_DTM_=0 DEBUG_INFO=1 DBG_ROM_MAIN=0 APP_CFG=0  OSALMEM_METRICS=0 PHY_MCU_TYPE=MCU_BUMBEE_M0 CFG_SLEEP_MODE=PWR_MODE_NO_SLEEP DEF_GAPBOND_MGR_ENABLE=0 USE_FS=0 MAX_NUM_LL_CONN=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\components\inc;..\components\ble\controller;..\components\osal\include;..\components\ble\include;..\components\ble\hci;..\components\ble\host;..\components\profiles\ota_app;..\components\profiles\DevInfo;..\components\profiles\SimpleProfile;..\components\profiles\Roles;.\source;..\components\libraries\crc16;..\components\driver\watchdog;..\components\driver\clock;..\components\driver\pwrmgr;..\components\driver\uart;..\components\driver\gpio;..\components\driver\timer;..\components\driver\log;..\components\driver\pwm;..\components\driver\flash;..\components\driver\led_light;..\components\libraries\fs;..\components\arch\cm0;..\misc;..\components\libraries\datetime;..\components\driver\key;..\components\driver\my_i2c;..\components\profiles\ppsp</IncludePath>
+              <IncludePath>..\components\inc;..\components\ble\controller;..\components\osal\include;..\components\ble\include;..\components\ble\hci;..\components\ble\host;..\components\profiles\ota_app;..\components\profiles\DevInfo;..\components\profiles\SimpleProfile;..\components\profiles\Roles;.\source;..\components\libraries\crc16;..\components\driver\watchdog;..\components\driver\clock;..\components\driver\pwrmgr;..\components\driver\uart;..\components\driver\gpio;..\components\driver\timer;..\components\driver\log;..\components\driver\pwm;..\components\driver\flash;..\components\driver\led_light;..\components\libraries\fs;..\components\arch\cm0;..\misc;..\components\libraries\datetime;..\components\driver\key;..\components\driver\my_i2c;..\components\OTAEVENT</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -630,6 +630,31 @@
               <FileType>1</FileType>
               <FilePath>.\source\aes.c</FilePath>
             </File>
+            <File>
+              <FileName>sbpProfile_ota.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\source\sbpProfile_ota.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>OTAevent</GroupName>
+          <Files>
+            <File>
+              <FileName>otaevents.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\components\OTAEVENT\otaevents.c</FilePath>
+            </File>
+            <File>
+              <FileName>otaevents.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\components\OTAEVENT\otaevents.h</FilePath>
+            </File>
+            <File>
+              <FileName>ota_app_service1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\components\OTAEVENT\ota_app_service1.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -639,31 +664,6 @@
               <FileName>readme.txt</FileName>
               <FileType>5</FileType>
               <FilePath>.\readme.txt</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ppsp</GroupName>
-          <Files>
-            <File>
-              <FileName>core_queu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\components\profiles\ppsp\core_queu.c</FilePath>
-            </File>
-            <File>
-              <FileName>list_slst.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\components\profiles\ppsp\list_slst.c</FilePath>
-            </File>
-            <File>
-              <FileName>ppsp_impl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\components\profiles\ppsp\ppsp_impl.c</FilePath>
-            </File>
-            <File>
-              <FileName>ppsp_serv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\components\profiles\ppsp\ppsp_serv.c</FilePath>
             </File>
           </Files>
         </Group>

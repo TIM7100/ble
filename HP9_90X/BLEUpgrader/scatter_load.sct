@@ -28,8 +28,8 @@ LR_ROM_JT_GC  0x1fff0000 0x00800 {
  } 
 ;LR_ROM_XIP  0x11010000 0x014000 {
 ;  ER_ROM_XIP 0x11010000 0x014000  {  ; load address = execution address
-LR_ROM_XIP  0x11020000 0x020000 {
-  ER_ROM_XIP 0x11020000 0x020000  {  ; load address = execution address
+LR_ROM_XIP  0x11020000 0x014000 {
+  ER_ROM_XIP 0x11020000 0x014000  {  ; load address = execution address
    gatt*.o(+RO)
    gattservapp.o(+RO)
    l2cap*.o(+RO)
@@ -42,10 +42,7 @@ LR_ROM_XIP  0x11020000 0x020000 {
    ;led_light.o(+RO)
    ;pwm.o(+RO)
    ota_app_service.o(+RO)
-   
-   ppsp_impl.o(+RO)
-   ppsp_serv.o(+RO)
-   
+   ota_app_service1.o(+RO)
    my_printf.o(+RO)
    gpio.o(+RO)
    ;key.o(+RO)

@@ -1,0 +1,746 @@
+/**************************************************************************************************
+
+    Phyplus Microelectronics Limited confidential and proprietary.
+    All rights reserved.
+
+    IMPORTANT: All rights of this software belong to Phyplus Microelectronics
+    Limited ("Phyplus"). Your use of this Software is limited to those
+    specific rights granted under  the terms of the business contract, the
+    confidential agreement, the non-disclosure agreement and any other forms
+    of agreements as a customer or a partner of Phyplus. You may not use this
+    Software unless you agree to abide by the terms of these agreements.
+    You acknowledge that the Software may not be modified, copied,
+    distributed or disclosed unless embedded on a Phyplus Bluetooth Low Energy
+    (BLE) integrated circuit, either as a product or is integrated into your
+    products.  Other than for the aforementioned purposes, you may not use,
+    reproduce, copy, prepare derivative works of, modify, distribute, perform,
+    display or sell this Software and/or its documentation for any purposes.
+
+    YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
+    PROVIDED AS IS WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+    INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
+    NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
+    PHYPLUS OR ITS SUBSIDIARIES BE LIABLE OR OBLIGATED UNDER CONTRACT,
+    NEGLIGENCE, STRICT LIABILITY, CONTRIBUTION, BREACH OF WARRANTY, OR OTHER
+    LEGAL EQUITABLE THEORY ANY DIRECT OR INDIRECT DAMAGES OR EXPENSES
+    INCLUDING BUT NOT LIMITED TO ANY INCIDENTAL, SPECIAL, INDIRECT, PUNITIVE
+    OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF PROCUREMENT
+    OF SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
+    (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
+
+**************************************************************************************************/
+
+/**************************************************************************************************
+    Filename:       gpio_demo.c
+    Revised:        $Date $
+    Revision:       $Revision $
+
+
+**************************************************************************************************/
+
+/*********************************************************************
+    INCLUDES
+*/
+
+#include "OSAL.h"
+#include "log.h"
+
+#include "gpio.h"
+//#include "clock.h"
+
+#include "myi2c.h"
+#include "UpgraderHp9Serial.h"
+#include "random.h"
+#include "file_handle.h"
+#include "crc16.h"
+#include "app_datetime.h"
+
+
+/******软件iic********/
+
+#define Timeout 20
+
+#define EEDATA_SN_ADDR       0x35000
+#define SN_ADDR_STEP         0x1000
+#define BACKDOOR_BASEADDR    0x25200
+#define SN_LEN               0xEF8
+
+
+//enum {
+//	update_sndata_type = 0x01,
+//	update_backdoor_cmd = 0x04,
+//	change_sn_cmd = 0x7D
+//	
+//};
+
+static u8 tx_array[0x100];
+static u8 iic_rxbuf[0x100];
+static u8 rx_length_buf;                   //接收数据长度
+
+static u8 array[10] = {0};
+static u8 backdoor_data[130] = {0};
+static u8 read_chip_addr = 0;      //该芯片地址
+
+
+static u8 SelectIICAddr(void);     //遍历地址
+
+static u8 update_sndata(u32 updata_addr, u8* sndata, u16 data_len);
+static u8 update_typedata(void);
+static u8 update_ctldata(void);
+static u8 update_backdoor(u32 backdoor_addr, u8* backdoor);
+
+static u8 read_oem_cmd(u8* cmd_buf, u8 cmd_len);
+static u8 read_oem_cmd_withdelay(u8* cmd_buf, u8 cmd_len, u32 delay_ms);
+
+static u8 read_data_backdoor(void);
+/************/
+
+
+void upgrader_hp9_serial(void)
+{
+    u8 read_dddr;
+
+	i2c_init();
+//    //1.确定需要读取的芯片的地址
+    read_dddr = SelectIICAddr();                    //遍历地址，直到当前检测芯片回应
+    LOG("Addr: %02X\r\n", read_dddr);
+    read_chip_addr = 0X60;//read_dddr;                     //保存地址到全局
+
+
+    if (read_data_backdoor() == 1)       //读后门数据
+	{
+		LOG("read_backdoor_error\r\n");
+	}
+    osal_memcpy(backdoor_data, iic_rxbuf, 128);
+	print_hex(backdoor_data, 128);
+//  if (strncmp(backdoor_data,new_version,10) != 0)     //对比版本号，判断是否需要更新
+//  {
+//
+//  }
+
+	random_array(array);
+
+//    backdoor_changesn();
+//    LOG("ReadBackDoor2:\r\n");
+//    read_data_backdoor();           //读后门数据
+
+//	read_oem_cmd(cmd_buf, cmd_len);
+}
+
+
+static u8 SelectIICAddr(void)
+{
+    u8 ChipAddr = 0;
+
+    if (IIC_SendData(0x60, NULL, 0) == I2C_OK)
+    {
+        ChipAddr = 0x60;
+    }
+    else if (IIC_SendData(0x62, NULL, 0) == I2C_OK)
+    {
+        ChipAddr = 0x62;
+    }
+    else if (IIC_SendData(0x64, NULL, 0) == I2C_OK)
+    {
+        ChipAddr = 0x64;
+    }
+    else if (IIC_SendData(0x66, NULL, 0) == I2C_OK)
+    {
+        ChipAddr = 0x66;
+    }
+    else
+    {
+        return ChipAddr;
+    }
+
+//      read_chip_addr = ChipAddr;
+    return ChipAddr;
+}
+
+
+//u8 send_sn_data(void)
+//{
+//		static u8 i = 0;
+////		u8 array[10] = {0};
+//		
+//		u8 upgrader_data[0xF00];
+//		
+//		if (i < 10) //; i < 10; i++)            //需要刷新几套数据
+//    {
+//				osal_memset(upgrader_data, 0, 0xF00);
+//				read_file_from_flash(array[i] - 1, upgrader_data);
+
+//				if (update_sndata(EEDATA_SN_ADDR + (SN_ADDR_STEP * i), (u8*)upgrader_data + 2, SN_LEN - 4) != 0)
+//				{
+//					LOG("ERROR 1\r\n");
+////					count++;
+//				}
+//				LOG("num:%d\r\n", i);
+//				i++;
+//				
+//				return 0;
+//    }
+//		return 0;
+//}
+
+
+
+
+/****************************************************************************
+* 函数名         ：backdoor_changesn
+* 函数功能       ：刷新序列号，修改后门flash版本
+* 输入           ：无
+* 输出           ：无
+****************************************************************************/
+u8 backdoor_changesn(void)
+{
+//    u32 SnDataAddr = 0x35000;
+    u8 count = 0;
+    static u8 i = 0;
+    char new_version[10] = {0}; //更新的flash版本
+	u8 upgrader_data[0xF00] = {0};
+
+	
+    //Step1 刷新序列号区的数据
+    if (i < 10) //; i < 10; i++)            //需要刷新几套数据
+    {
+		read_file_from_flash(array[i] - 1, upgrader_data);
+		LOG("DD1\r\n");
+		if (update_sndata(EEDATA_SN_ADDR + (SN_ADDR_STEP * i), (u8*)upgrader_data + 2, SN_LEN - 4) != 0)
+		{
+			LOG("ERROR 1\r\n");
+			count++;
+		}
+		LOG("num:%d\r\n", i);
+		i++;
+		
+		return 1;
+    }
+	
+    //Step2 发送命令,使芯片内部从已刷新数据中刷新程序所需数据(耗时...)
+    if (update_typedata() != 0)
+    {
+        LOG("ERROR 2\r\n");
+        count++;
+    }
+
+    //Step3 发送命令,使芯片内部刷新 更新替换区域与控制区域 UpDataCtlInfo
+    if (update_ctldata() != 0)
+    {
+        LOG("ERROR 3\r\n");
+        count++;
+    }
+	
+//	//Step4 发送后门数据,刷新后门数据版本
+//	get_file_info(new_version, NULL);
+//	osal_memcpy(backdoor_data, new_version, 10);
+//    if (update_backdoor(BACKDOOR_BASEADDR, backdoor_data) != 0)
+//    {
+//        LOG("ERROR 4\r\n");
+//        count++;
+//    }
+	
+//    //62命令
+//    //ReadOem_Cmd((u8*)CMD_62, 7);
+	i = 0;	
+    if (count == 0)
+    {
+        LOG("SUCCESS\r\n");
+		return 2;
+    }
+	return 0;
+}
+
+/****************************************************************************
+   * 函数名         ：update_sndata
+   * 函数功能       ：更新SN序列号数据
+   * 输入           ：u32 update_addr 要更新的地址
+                                            u8* sndata 要更新的数据
+                                            u16 data_len 数据长度
+   * 输出           ：0：成功
+   ****************************************************************************/
+static u8 update_sndata(u32 update_addr, u8* sndata, u16 data_len)
+{
+    const u8 update_sndata_type = 0x01;
+    const u8 change_sn_cmd = 0x7D;
+    const u8 section_size = 0xE0;
+
+//	u8 tx_array[0x100] = {0};
+    u8 send_round;
+    u8 last_size;
+    u8 round_cnt;
+    u16 data_offset;
+    u32 target_addr;
+    u16 updata_size;
+
+
+    send_round = data_len / section_size;  //整轮次数                //0x12
+    last_size = data_len % section_size;   //最后空余轮的大小  //0x40
+
+    LOG("LastSize:0x%02X\r\n", last_size);
+
+    data_offset = 0;
+    for (round_cnt = 0; round_cnt < send_round; round_cnt++)
+    {
+//        memset_data(tx_array, 0, 0x100);
+        osal_memset(tx_array, 0, 0x100);
+        tx_array[0] = 0x40;
+        tx_array[1] = change_sn_cmd;
+
+        //升级类型与反码-刷新序列号区
+        tx_array[3] = update_sndata_type;    //rx_buf[0]
+        tx_array[4] = ~update_sndata_type;   //rx_buf[1]
+
+        //烧录序列号的地址
+        target_addr = update_addr + data_offset;
+        tx_array[5] = (u8)(target_addr >> 24);    //rx_buf[2]
+        tx_array[6] = (u8)(target_addr >> 16);    //rx_buf[3]
+        tx_array[7] = (u8)(target_addr >> 8);     //rx_buf[4]
+        tx_array[8] = (u8)target_addr;                //rx_buf[5]
+
+        //烧录的大小
+        updata_size = section_size;
+        tx_array[9] = (u8)(updata_size >> 8);     //rx_buf[6]
+        tx_array[10] = (u8)updata_size;               //rx_buf[7]
+
+        //烧录的数据
+//        memcpy_data(tx_array + 11, sndata + DataOffset, updata_size);
+        osal_memcpy(tx_array + 11, sndata + data_offset, updata_size);
+
+        //烧录的命令有效数据长度
+        tx_array[2] = 8 + updata_size;
+
+        read_oem_cmd(tx_array, tx_array[2] + 3);
+
+        if ((iic_rxbuf[0] != (u8)update_sndata_type) || (iic_rxbuf[1] != (u8)(~update_sndata_type)) || (iic_rxbuf[2] != 0x00))
+        {
+            LOG("X1");
+            return 1;
+        }
+        data_offset += updata_size;
+    }
+
+    if (last_size)      //如果有剩余的数据
+    {
+//        memset_data(tx_array, 0, 0x100);
+        osal_memset(tx_array, 0, 0x100);
+        tx_array[0] = 0x40;
+        tx_array[1] = change_sn_cmd;
+
+        //升级类型与反码-刷新序列号区
+        tx_array[3] = update_sndata_type;    //rx_buf[0]
+        tx_array[4] = ~update_sndata_type;   //rx_buf[1]
+
+        //烧录序列号的地址
+        target_addr = update_addr + data_offset;
+        tx_array[5] = (u8)(target_addr >> 24);    //rx_buf[2]
+        tx_array[6] = (u8)(target_addr >> 16);    //rx_buf[3]
+        tx_array[7] = (u8)(target_addr >> 8);     //rx_buf[4]
+        tx_array[8] = (u8)target_addr;                //rx_buf[5]
+
+        //烧录的大小,最后一轮的剩余大小,0x14//0x40
+        updata_size = last_size;
+        tx_array[9] = (u8)(updata_size >> 8);     //rx_buf[6]
+        tx_array[10] = (u8)updata_size;               //rx_buf[7]
+
+        //烧录的数据
+//        memcpy_data(tx_array + 11, sndata + DataOffset, updata_size);
+        osal_memcpy(tx_array + 11, sndata + data_offset, updata_size);
+
+        //烧录的命令有效数据长度
+        tx_array[2] = 8 + updata_size;
+
+        read_oem_cmd(tx_array, tx_array[2] + 3);
+
+        if ((iic_rxbuf[0] != (u8)update_sndata_type) || (iic_rxbuf[1] != (u8)(~update_sndata_type)) || (iic_rxbuf[2] != 0))
+        {
+            LOG("X2");
+            return 1;
+        }
+        data_offset += updata_size;
+    }
+
+    return 0;
+}
+
+
+/****************************************************************************
+* 函数名         ：update_typedata
+* 函数功能       ：更新Type数据
+* 输入           ：无
+* 输出           ： 0：成功
+****************************************************************************/
+static u8 update_typedata(void)
+{
+    u8 chip_update_typedata[7] = {0x40, 0x7D, 0x04, 0x02, 0xFD, 0, 0};
+
+    //注意需要确定芯片型号
+    chip_update_typedata[5] = 1;   // 1 90X 2 95X 3 97X
+//    ReadOem_Cmd_WithDelay(UpDataTypeData, 7, 1000);
+    read_oem_cmd_withdelay(chip_update_typedata, 7, 1000);
+    if ((iic_rxbuf[0] != 2) || (iic_rxbuf[1] != 0xFD) || (iic_rxbuf[2] != 0))
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+
+/****************************************************************************
+* 函数名         ：update_ctldata
+* 函数功能       ：更新ctl数据
+* 输入           ：无
+* 输出           ： 0：成功
+****************************************************************************/
+static u8 update_ctldata(void)
+{
+    u8 chip_update_ctldata[7] = {0x40, 0x7D, 0x04, 0x03, 0xFC, 0, 0};
+
+    read_oem_cmd_withdelay(chip_update_ctldata, 7, 10);
+    if ((iic_rxbuf[0] != 3) || (iic_rxbuf[1] != 0xFC) || (iic_rxbuf[2] != 0))
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+
+/****************************************************************************
+* 函数名         ：update_backdoor
+* 函数功能       ：更新后门数据
+* 输入           ：u32 backdoor_addr        后门地址
+                                    u8* backdoor                要更新的后门数据
+* 输出           ： 0：成功
+****************************************************************************/
+static u8 update_backdoor(u32 backdoor_addr, u8* backdoor)
+{
+    const u8 update_backdoor_cmd = 0x04;
+    const u8 change_sn_cmd = 0x7D;
+    const u8 section_size = 0x80;
+//      const u8 SectionSize_flash_version = 0x0A;
+//	u8 tx_array[0x100];
+	
+//    memset_data(tx_array, 0, 0x100);
+    osal_memset(tx_array, 0, 0x100);
+    tx_array[0] = 0x40;
+    tx_array[1] = change_sn_cmd;
+
+    //升级类型与反码-刷新序列号区
+    tx_array[3] = update_backdoor_cmd;    //rx_buf[0]
+    tx_array[4] = ~update_backdoor_cmd;   //rx_buf[1]
+
+    //烧录序列号的地址
+    tx_array[5] = (u8)(backdoor_addr >> 24);    //rx_buf[2]
+    tx_array[6] = (u8)(backdoor_addr >> 16);    //rx_buf[3]
+    tx_array[7] = (u8)(backdoor_addr >> 8);     //rx_buf[4]
+    tx_array[8] = (u8)backdoor_addr;                //rx_buf[5]
+
+    //烧录的大小
+    tx_array[9] = (u8)(section_size >> 8);     //rx_buf[6]
+    tx_array[10] = (u8)section_size;               //rx_buf[7]
+//      tx_array[9] = (u8)(section_size >> 8);     //rx_buf[6]
+//    tx_array[10] = (u8)section_size;               //rx_buf[7]
+
+    //烧录的数据
+//    memcpy_data(tx_array + 11, backdoor, section_size);
+    osal_memcpy(tx_array + 11, backdoor, section_size);
+//      osal_memcpy(tx_array + 11, backdoor, SectionSize_flash_version);
+
+
+    //烧录的命令有效数据长度
+    tx_array[2] = 8 + section_size;
+//      tx_array[2] = 8 + SectionSize_flash_version;
+
+    read_oem_cmd_withdelay(tx_array, tx_array[2] + 3, 0x20);
+
+    if ((iic_rxbuf[0] != (u8)update_backdoor_cmd) || (iic_rxbuf[1] != (u8)(~update_backdoor_cmd)) || (iic_rxbuf[2] != 0))
+    {
+        LOG("ReadDataBackDoor_Fail\r\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+
+/****************************************************************************
+* 函数名         ：read_data_backdoor
+* 函数功能       ：读后门数据
+* 输入           ：无
+* 输出           ： 0：成功
+****************************************************************************/
+static u8 read_data_backdoor(void)
+{
+	u8 array_readbackdoor[7] = {0x40, 0x78, 0x04, 0x2A, 0xED, 0xAB, 0x72};
+
+    LOG("ReadBackDoor\r\n");
+//    read_oem_cmd(tx_array, 7);
+	read_oem_cmd(array_readbackdoor, 7);
+    LOG("\r\n");
+
+//    if ((iic_rxbuf[0] != (u8)update_backdoor) || (iic_rxbuf[1] != (u8)(~update_backdoor)) || (iic_rxbuf[2] != 0))
+//    {
+//        return 1;
+//    }
+
+    return 0;
+}
+
+
+
+
+/****************************************************************************
+* 函数名         ：read_oem_cmd
+* 函数功能       ：读OEM指令
+* 输入           ：u8* cmd_buf  要发送的指令
+                   u8 cmd_len 指令长度
+* 输出           ：无
+****************************************************************************/
+static u8 read_oem_cmd(u8* cmd_buf, u8 cmd_len)
+{
+    int i;
+    u8 cnt;
+
+    u8 SEND_80_BUF[1] = {0x80};
+    u8 SEND_82_BUF[1] = {0x82};
+    u8 receive_len_buf[2];
+    u8 re_data_buf[0x100];
+//    u8 tx_array[0x100] = {0};
+    u16 cal_crc_temp;
+    u16 data_crc_temp;
+
+	osal_memset(tx_array, 0, 0x100);
+    osal_memset(iic_rxbuf, 0, 0x100);
+    //------------------------------------------
+    //例如传入 0x40, 0x5A, 0x02, 0x01, 0x00
+    //------------------------------------------
+    //计算发送命令的CRC
+    tx_array[0] = cmd_buf[1];           //5A
+    for (i = 0; i < cmd_len - 3; i++)
+    {
+        tx_array[i + 1] = cmd_buf[3 + i]; //01 00
+    }
+    cal_crc_temp = GetCrc16(tx_array, cmd_len - 2);
+
+    //-------------------------------------
+    //将传进的命令加上CRC，存到tx_array中
+    for (i = 0; i < cmd_len; i++)
+    {
+        tx_array[i] = cmd_buf[i];
+    }
+    tx_array[cmd_len] = (u8)(cal_crc_temp >> 8);
+    tx_array[cmd_len + 1] = (u8)(cal_crc_temp);
+
+//		LOG("tx_array:\r\n");
+//		print_hex(tx_array,sizeof(tx_array));
+//		LOG("\r\n");
+    cnt = 0;
+    while (IIC_SendData(read_chip_addr, tx_array, cmd_len + 2) != I2C_OK) //发送一组命令 (0x60, 0x40, 0x5A, 0x02, 0x01, 0x00, CRC_H, CRC_L)
+    {
+        Delay_us(500);
+        if (cnt++ >= Timeout)
+        {
+            LOG("数据读取出错1\r\n");
+//            while (1);
+						return 1;
+        }
+          
+    }
+
+    cnt = 0;
+    while (IIC_RecData(read_chip_addr, *SEND_80_BUF, receive_len_buf, 2) != I2C_OK)//发送一组命令 (60, 80)并接收状态码与回应长度 (61, toner_status, rx_count)
+    {
+        Delay_us(500);
+        if (cnt++ >= Timeout)
+        {
+            LOG("数据读取出错2\r\n");
+//            while (1);
+						return 2;
+        }
+         
+    }
+
+		LOG("80CMD\r\n");
+    rx_length_buf = receive_len_buf[1];
+    cnt = 0;
+    while (IIC_RecData(read_chip_addr, *SEND_82_BUF, re_data_buf, rx_length_buf) != I2C_OK)//发送一组命令 (60, 82)并接收回应数据 (61,xx,xx,xx)
+    {
+        Delay_us(500);
+        if (cnt++ >= Timeout)
+        {
+            LOG("数据读取出错3\r\n");
+//            while (1);
+						return 2;
+        }
+          
+    }
+    //----------------------------------------------------------------------------------
+    //校验接收数据的CRC
+    //----------------------------------------------------------------------------------
+    if (rx_length_buf < 2)
+    {
+        LOG("Data_Receive_Failed_1!!! \n");
+//        while (1);
+				return 3;
+    }
+    tx_array[0] = receive_len_buf[0];               //回应数据CRC计算第一位, toner_status;
+    for (i = 0; i < rx_length_buf - 2; i++)          //回应数据前rx_count - 2个数据(最后两位为CRC)
+    {
+        tx_array[i + 1] = re_data_buf[i];
+    }
+
+    //计算CRC并校验
+    cal_crc_temp = GetCrc16(tx_array, rx_length_buf - 1);
+		LOG("receive_len_buf:\r\n");
+		print_hex(receive_len_buf, sizeof(receive_len_buf));
+		LOG("\r\n");
+		LOG("rx_length_buf:%02X\r\n",rx_length_buf);
+		LOG("re_data_buf:\r\n");
+		print_hex(re_data_buf, rx_length_buf);
+		LOG("\r\n");
+
+    data_crc_temp = (re_data_buf[rx_length_buf - 2] << 8) + re_data_buf[rx_length_buf - 1];
+    if (cal_crc_temp != data_crc_temp)
+    {
+		LOG("cal_crc_temp:%X",cal_crc_temp);
+		LOG("data_crc_temp:%X",data_crc_temp);
+        LOG("Data_Receive_Failed_2!!! \n");
+//        while (1);
+        return 4;
+    }
+
+//		LOG("IIC_RxBuf:\r\n");
+    //接收数据存放到iic_rxbuf中
+    for (i = 0; i < rx_length_buf; i++)
+    {
+        iic_rxbuf[i] = re_data_buf[i];
+
+//        LOG("%02X ", iic_rxbuf[i]);
+    }
+//    LOG("\r\n");
+
+    Delay_ms(100);
+    return 0;
+
+}
+
+
+
+/****************************************************************************
+* 函数名         ：read_oem_cmd_withdelay
+* 函数功能       ：读OEM指令并等待
+* 输入           ：u8* cmd_buf 要发送的指令
+                                    u8 cmd_len 指令长度
+                                    u32 delay_ms 等待时长
+* 输出           ：无
+****************************************************************************/
+static u8 read_oem_cmd_withdelay(u8* cmd_buf, u8 cmd_len, u32 delay_ms)
+{
+    int i;
+    u8 cnt;
+
+    u8 SEND_80_BUF[1] = {0x80};
+    u8 SEND_82_BUF[1] = {0x82};
+    u8 receive_len_buf[2];
+    u8 re_data_buf[0x100];
+//    u8 tx_array[0x100];
+    u16 cal_crc_temp;
+    u16 data_crc_temp;
+
+	osal_memset(tx_array, 0, 0x100);
+    osal_memset(iic_rxbuf, 0, 0x100);
+    //计算发送命令的CRC
+    tx_array[0] = cmd_buf[1];           //5A
+    for (i = 0; i < cmd_len - 3; i++)
+    {
+        tx_array[i + 1] = cmd_buf[3 + i]; //01 00
+    }
+		cal_crc_temp = GetCrc16(tx_array, cmd_len - 2);
+	
+    //-------------------------------------
+    //将传进的命令加上CRC，存到tx_array中
+    for (i = 0; i < cmd_len; i++)
+    {
+        tx_array[i] = cmd_buf[i];
+    }
+    tx_array[cmd_len] = (u8)(cal_crc_temp >> 8);
+    tx_array[cmd_len + 1] = (u8)(cal_crc_temp);
+
+    //--------------------------------------
+    cnt = 0;
+    while (IIC_SendData(read_chip_addr, tx_array, cmd_len + 2) != I2C_OK)//发送一组命令 (0x60, 0x40, 0x5A, 0x02, 0x01, 0x00)
+    {
+        Delay_us(1000);
+        if (cnt++ >= Timeout)
+        {
+            LOG("数据读取出错\r\n");
+//            while (1);
+						return 1;
+        }
+    }
+    //======================
+    Delay_ms(delay_ms);
+    //======================
+
+    //发送一组命令 (60, 80)并//接收状态码与回应长度 (61, toner_status, rx_count)
+    cnt = 0;
+    while (IIC_RecData(read_chip_addr, *SEND_80_BUF, receive_len_buf, 2) != I2C_OK)
+    {
+        Delay_us(1000);
+        if (cnt++ >= Timeout)
+        {
+//            while (1);
+					return 2;
+        }
+    }
+
+    //发送一组命令 (60, 82)并//接收回应数据 (61,xx,xx,xx)
+    cnt = 0;
+    rx_length_buf = receive_len_buf[1];
+    while (IIC_RecData(read_chip_addr, *SEND_82_BUF, re_data_buf, rx_length_buf) != I2C_OK)
+    {
+        Delay_us(1000);
+        if (cnt++ >= Timeout)
+        {
+//            while (1);
+					return 3;
+        }
+    }
+
+    //----------------------------------------------------------------------------------
+    //校验接收数据的CRC
+    //----------------------------------------------------------------------------------
+    if (rx_length_buf < 2)
+    {
+        LOG("Data_Receive_Failed!!! \n");
+//        while (1);
+				return 4;
+    }
+    tx_array[0] = receive_len_buf[0];               //回应数据CRC计算第一位, toner_status;
+    for (i = 0; i < rx_length_buf - 2; i++)          //回应数据前rx_count - 2个数据(最后两位为CRC)
+    {
+        tx_array[i + 1] = re_data_buf[i];
+    }
+
+    //计算CRC并校验
+    cal_crc_temp = GetCrc16(tx_array, rx_length_buf - 1);
+	
+    data_crc_temp = (re_data_buf[rx_length_buf - 2] << 8) + re_data_buf[rx_length_buf - 1];
+    if (cal_crc_temp != data_crc_temp)
+    {
+        LOG("Data_Receive_Failed!!! \n");
+//        while (1);
+				return 5;
+    }
+
+    //接收数据存放到iic_rxbuf中
+    for (i = 0; i < rx_length_buf; i++)
+    {
+        iic_rxbuf[i] = re_data_buf[i];
+    }
+
+    Delay_ms(100);
+		return 0;
+}

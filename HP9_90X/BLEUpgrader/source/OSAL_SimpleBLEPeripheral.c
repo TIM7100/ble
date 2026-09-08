@@ -78,6 +78,10 @@
 #include "simpleBLEPeripheral.h"
 #include "halPeripheral.h"
 
+
+/*otatest*/
+#include "otaevents.h"
+
 /*********************************************************************
     GLOBAL VARIABLES
 */
@@ -100,6 +104,7 @@ const pTaskEventHandlerFn tasksArr[] =
     #endif
     GATTServApp_ProcessEvent,                                         // task 7
     SimpleBLEPeripheral_ProcessEvent,                                 // task 8			连接事件
+	  OTATEST_Event,                                                    // task 9   OTA升级事件
 
 };
 
@@ -149,6 +154,7 @@ void osalInitTasks( void )
     GATTServApp_Init( taskID++ );
     /* Application */
     SimpleBLEPeripheral_Init( taskID++ );
+		OTATEST_Event_Init( taskID++ );
 }
 #endif
 /*********************************************************************

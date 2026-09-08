@@ -68,8 +68,6 @@
 #include "UpgraderHp9Serial.h"
 #include "random.h"
 #include <stdio.h>
-#include "ppsp_serv.h"
-#include "ppsp_impl.h"
 /*********************************************************************
     MACROS
 */
@@ -91,7 +89,7 @@
 #define DEFAULT_DESIRED_MIN_CONN_INTERVAL     24//32//80
 
 // Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     32//800
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     800//48//800
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_DESIRED_SLAVE_LATENCY         0
@@ -123,9 +121,6 @@
 //外部写入名称地址
 #define DEVICE_NAME_FLASH_ADDR  0x1101C000
 
-/*********************************************************************
-    build define
-*/
 
 /*********************************************************************
     TYPEDEFS
@@ -138,10 +133,7 @@ typedef enum {
     FLASH_GREEN_RED
 }LED_STATE_t;
 
-LED_STATE_t light_state = OFTEN_GREEN;
-
-
-
+ LED_STATE_t light_state;
 
 
 /*********************************************************************
@@ -300,12 +292,7 @@ static gapBondCBs_t simpleBLEPeripheral_BondMgrCBs =
 };
 #endif
 
-static void simple_rset_hdlr(void)
-{
-	osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_RSET_CHIP_EVT, 3000);
-}
 
-static ppsp_impl_clit_hdlr_t bleMesh_ppsp_impl_appl_hdlr = {.ppsp_impl_appl_rset_hdlr = simple_rset_hdlr};
 
 
 /*********************************************************************
@@ -403,11 +390,8 @@ void SimpleBLEPeripheral_Init( uint8 task_id )					//修改的重点
     GGS_AddService( GATT_ALL_SERVICES );            // GAP			   可以通过该函数修改设备名
     GATTServApp_AddService( GATT_ALL_SERVICES );    // GATT attributes 默认不动
 	//自定义的服务，修改的主要内容
-		ppsp_serv_add_serv(PPSP_SERV_CFGS_SERV_FEB3_MASK);
-		
     ota_app_AddService(ota_ble_updata_app_CB);
-   
-	 
+
     #if (1)
     {
         uint8 mtuSet = 134;
@@ -694,12 +678,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
 
     //广播阶段时，红灯闪烁且其他升级任务停止使用
     return 0;
-		
-		if (events & SBP_RSET_CHIP_EVT)
-		{
-			hal_system_soft_reset();
-			return (events ^ SBP_RSET_CHIP_EVT);
-		}
 }
 
 
@@ -793,7 +771,7 @@ static void peripheralStateReadRssiCB( int8  rssi )
     @param   newState - new state
 
     @return  none
-*/
+**********************************************************************/
 static void peripheralStateNotificationCB( gaprole_States_t newState )
 {
     switch ( newState )
@@ -859,7 +837,6 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
 
     case GAPROLE_CONNECTED:
         HCI_PPLUS_ConnEventDoneNoticeCmd(simpleBLEPeripheral_TaskID, NULL);
-		    ppsp_impl_reg_serv_appl(&bleMesh_ppsp_impl_appl_hdlr);
         break;
 
     case GAPROLE_CONNECTED_ADV:

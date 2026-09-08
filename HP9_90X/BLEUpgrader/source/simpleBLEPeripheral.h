@@ -59,23 +59,25 @@ extern "C"
 
 
 // Simple BLE Peripheral Task Events
-#define SBP_START_DEVICE_EVT                           0x0001
-#define SBP_LIGHT_STATE_EVT                            0x0002
-#define SBP_FILE_AES_EVT                               0x0004
-#define SBP_AUTO_BURN_EVT							   0x0008
+#define SBP_START_DEVICE_EVT                           0x0001  //设备启动事件
+#define SBP_LIGHT_STATE_EVT                            0x0002  //灯光
+#define SBP_FILE_AES_EVT                               0x0004  //文件AES加密处理事件
+#define SBP_AUTO_BURN_EVT							   0x0008                //自动烧录事件
 //#define SBP_KEY_BURN_EVT							   0x0010
-#define SBP_UPDATING_CHIP_EVT						   0x0080
-#define SBP_RTC_TEST_EVT                               0x0040
+#define SBP_UPDATING_CHIP_EVT						   0x0080              //芯片固件升级事件
+#define SBP_RTC_TEST_EVT                               0x0040  // RTC时钟测试事件
     
 //#define SBP_PERIODIC_EVT                               0x0400
-#define SBP_RESET_ADV_EVT                              0x0800
+#define SBP_RESET_ADV_EVT                              0x0800  //重置蓝牙广播事件
 //#define SBP_DISABLE_LATENCY_TEST_EVT                   0x0010
 //#define SBP_ENABLE_LATENCY_EVT                         0x0020
 
 //#define SBP_DLE_CHANGE_EVT                             0x0020
 //#define SBP_PHY_UPDATE_EVT                             0x0040
 //#define SBP_CONN_NOTIFY_EVT                            0x0080
-#define SBP_RSET_CHIP_EVT                                0x0200
+
+
+
 
 
 /*********************************************************************

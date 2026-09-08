@@ -68,8 +68,6 @@
 /*********************************************************************
     TYPEDEFS
 */
-//   sbpProfile_ota.o(+RO)
-
 
 /*********************************************************************
     GLOBAL VARIABLES
@@ -362,7 +360,7 @@ static gattAttribute_t simpleProfileAttrTbl[] =
     },
 
     // ----------------------------------------------------------------------
-    // Characteristic 6 Declaration, NOTify				使用该服务进行通知
+    // Characteristic 6 Declaration, NOTify
     {
         { ATT_BT_UUID_SIZE, characterUUID },
         GATT_PERMIT_READ,
@@ -370,7 +368,7 @@ static gattAttribute_t simpleProfileAttrTbl[] =
         &simpleProfileChar6Props
     },
 
-    // Characteristic Value 6						本特性的数值
+    // Characteristic Value 6
     {
         { ATT_BT_UUID_SIZE, simpleProfilechar6UUID },
         GATT_PERMIT_READ,
@@ -378,12 +376,12 @@ static gattAttribute_t simpleProfileAttrTbl[] =
         (uint8*)& simpleProfileChar6
     },
 
-    // Characteristic 6 configuration					特性值描述符
+    // Characteristic 6 configuration
     {
-        { ATT_BT_UUID_SIZE, clientCharCfgUUID },				//0x2902， 客户端数据配置
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,			
+        { ATT_BT_UUID_SIZE, clientCharCfgUUID },
+        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
         0,
-        (uint8*)simpleProfileChar6Config				//下方初始化为ffff			
+        (uint8*)simpleProfileChar6Config
     },
 
     // Characteristic 6 User Description
@@ -391,7 +389,7 @@ static gattAttribute_t simpleProfileAttrTbl[] =
         { ATT_BT_UUID_SIZE, charUserDescUUID },
         GATT_PERMIT_READ,
         0,
-        simpleProfileChar6UserDesp						//通知
+        simpleProfileChar6UserDesp
     },
 
     // ----------------------------------------------------------------------
@@ -565,12 +563,7 @@ bStatus_t SimpleProfile_SetParameter( uint8 param, uint8 len, void* value )
     case SIMPLEPROFILE_CHAR4:
         if ( len == sizeof ( uint8 ) )
         {
-			LOG("simpleProfileChar4 value:");
             simpleProfileChar4 = *((uint8*)value);
-//			while (len--)
-//			{
-//				LOG("%02X",*value++);
-//			}
             // See if Notification has been enabled
             //GATTServApp_ProcessCharCfg( simpleProfileChar4Config, &simpleProfileChar4, FALSE,
             //                            simpleProfileAttrTbl, GATT_NUM_ATTRS( simpleProfileAttrTbl ),
@@ -706,7 +699,7 @@ static uint8 simpleProfile_ReadAttrCB( uint16 connHandle, gattAttribute_t* pAttr
     {
         // 16-bit UUID
         uint16 uuid = BUILD_UINT16( pAttr->type.uuid[0], pAttr->type.uuid[1]);
-		LOG("Read UUID-->%04X\n", uuid);
+
         switch ( uuid )
         {
             // No need for "GATT_SERVICE_UUID" or "GATT_CLIENT_CHAR_CFG_UUID" cases;
@@ -795,7 +788,7 @@ static bStatus_t simpleProfile_WriteAttrCB( uint16 connHandle, gattAttribute_t* 
     {
         // 16-bit UUID
         uint16 uuid = BUILD_UINT16( pAttr->type.uuid[0], pAttr->type.uuid[1]);
-		LOG("UUID-->%04X\n", uuid);
+
         switch ( uuid )
         {
             #if 0
@@ -899,7 +892,6 @@ static bStatus_t simpleProfile_WriteAttrCB( uint16 connHandle, gattAttribute_t* 
             // Make sure it's not a blob oper
             if ( offset == 0 )
             {
-				LOG("1\n");
                 if ( len >ATT_GetCurrentMTUSize(0)-3 )
                 {
                     status = ATT_ERR_INVALID_VALUE_SIZE;
@@ -913,7 +905,6 @@ static bStatus_t simpleProfile_WriteAttrCB( uint16 connHandle, gattAttribute_t* 
             //Write the value
             if ( status == SUCCESS )
             {
-				LOG("2\n");
                 uint8* pCurValue = (uint8*)pAttr->pValue;
                 VOID osal_memcpy( pCurValue, pValue, len );
                 AT_LOG("[WtAttr5] [%3d]->",len);
@@ -935,14 +926,13 @@ static bStatus_t simpleProfile_WriteAttrCB( uint16 connHandle, gattAttribute_t* 
                 }
                 else
                 {
-					LOG("3\n");
                     for(i=0; i<len; i++)
                     {
-                        LOG("%02x ",*(pCurValue+i));
+                        AT_LOG("%02x ",*(pCurValue+i));
                     }
                 }
-				
-                LOG("\n");
+
+                AT_LOG("\n");
                 notifyApp = SIMPLEPROFILE_CHAR5;
             }
 
@@ -1020,8 +1010,7 @@ static bStatus_t simpleProfile_WriteAttrCB( uint16 connHandle, gattAttribute_t* 
 
             break;
 
-        case GATT_CLIENT_CHAR_CFG_UUID:				//想要读取的属性值为客户端配置数据
-			
+        case GATT_CLIENT_CHAR_CFG_UUID:
             status = GATTServApp_ProcessCCCWriteReq( connHandle, pAttr, pValue, len,
                                                      offset, GATT_CLIENT_CFG_NOTIFY );
             break;
@@ -1041,7 +1030,6 @@ static bStatus_t simpleProfile_WriteAttrCB( uint16 connHandle, gattAttribute_t* 
     // If a charactersitic value changed then callback function to notify application of change
     if ( (notifyApp != 0xFF ) && simpleProfile_AppCBs && simpleProfile_AppCBs->pfnSimpleProfileChange )
     {
-		LOG("4\n");
         simpleProfile_AppCBs->pfnSimpleProfileChange( notifyApp );
     }
 
