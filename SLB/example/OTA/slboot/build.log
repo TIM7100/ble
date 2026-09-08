@@ -1,0 +1,14 @@
+  
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Build target 'slboot'
+compiling slboot.c...
+compiling slb.c...
+compiling ota_flash.c...
+linking...
+Program Size: Code=13856 RO-data=1564 RW-data=17612 ZI-data=5420  
+After Build - User command #1: fromelf.exe --bin -o  ./bin  ./Objects/slboot.axf
+After Build - User command #2: fromelf.exe .\Objects\slboot.axf --i32combined --output .\bin\slboot.hex
+".\Objects\slboot.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:01
+  
+Batch-Build summary: 1 succeeded, 0 failed, 0 skipped - Time Elapsed: 00:00:01
