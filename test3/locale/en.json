@@ -9,6 +9,8 @@
   "index.component": "Component",
   "index.api": "API",
   "index.schema": "Schema",
+  "index.hp9DataUpgrade": "HP9 Data Upgrade",
+  "index.fwOTAUpgrade": "Firmware OTA Upgrade",
 
   
   "index.language": "Language/语言",
@@ -26,8 +28,8 @@
   "BLE.connect":"Connect Bluetooth devices",
   "BLE.disconnect":"Disconnect Bluetooth",
   "BLE.series":"Series",
-  "BLE.Local_version":"Local version",
-  "BLE.Cloud_version":"Cloud version",
+  "BLE.Local_version":"Local HP9 data version",
+  "BLE.Cloud_version":"Cloud HP9 data version",
   "index.version_error":"Version error, please update again",
   "index.finded":"device has been discovered",
   "BLE.RSSI":"RSSI",
@@ -74,5 +76,6 @@
   "notify.info_9":"The chip series does not match",
   
   "Upgrade.Progress":"Upgrade progress",
-  "Upgrade.Upgrading":"During the upgrade, please do not disconnect from the chip"
+  "Upgrade.Upgrading":"During the upgrade, please do not disconnect from the chip",
+  "Upgrade.OTAUpgrading":"During the upgrade, please do not disconnect the Bluetooth connection"
 }

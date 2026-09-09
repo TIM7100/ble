@@ -9,6 +9,8 @@
 	"index.component": "组件",
 	"index.api": "API",
 	"index.schema": "Schema",
+	"index.hp9DataUpgrade": "HP9数据升级",
+	"index.fwOTAUpgrade": "固件OTA升级",
 	
 	
 	"index.language": "语言/Language",
@@ -27,8 +29,8 @@
 		"BLE.mode":"升级模式",
 		"BLE.disconnect":"断开蓝牙连接",
 	"BLE.series":"系列",
-	"BLE.Local_version":"本地版本号",
-	"BLE.Cloud_version":"云端版本号",
+	"BLE.Local_version":"本地HP9数据版本",
+	"BLE.Cloud_version":"云端HP9数据版本",
 	"index.version_error":"版本出错，请重新更新",
 	"index.finded":"台设备被发现",
 	"BLE.RSSI":"信号强度",
@@ -75,5 +77,6 @@
 	"notify.info_9":"芯片系列不符",
 	
 	"Upgrade.Progress":"升级进度",
-	"Upgrade.Upgrading":"升级中，请勿断开与芯片连接"
+	"Upgrade.Upgrading":"升级中，请勿断开与芯片连接",
+	"Upgrade.OTAUpgrading":"升级中，请勿断开蓝牙连接"
 }

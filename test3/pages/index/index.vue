@@ -45,10 +45,10 @@
 				<!-- 升级模式选择 -->
 				<view v-if="!pg_flag && !rx_notify" class="mode-select">
 					<button type="primary" class="mode-btn" @click="startUpgrade(false)">
-						HP9数据升级
+						{{$t('index.hp9DataUpgrade')}}
 					</button>
 					<button type="primary" class="mode-btn" @click="startUpgrade(true)">
-						固件OTA升级
+						{{$t('index.fwOTAUpgrade')}}
 					</button>
 				</view>
 				
@@ -58,7 +58,7 @@
 			
 			
 			<view v-if ="pg_flag === true">		<!-- 升级烧录进度条 -->
-				<text class="uni-update_tips">{{$t('Upgrade.Upgrading')}}</text>
+					<text class="uni-update_tips">{{ fw_ota_mode ? $t('Upgrade.OTAUpgrading') : $t('Upgrade.Upgrading') }}</text>
 				<view class="uni-Rx_toast" >
 					
 					<view class="Rx_progress"  >
@@ -1778,57 +1778,57 @@
 						duration: 99999
 					});
 					
-					// 尝试连接到设备（可能是原始MAC或OTA MAC）
-					function tryConnect(dId) {
-						uni.createBLEConnection({
-							deviceId: dId,
-							success: res => {
-								console.log('OTA模式重连成功, deviceId:', dId);
-								that.connected = true;
-								// 确保equipment中有设备信息
-								if (!that.equipment || that.equipment.length === 0) {
-									that.equipment = [{ deviceId: dId, name: '' }];
-								} else {
-									that.equipment[0].deviceId = dId;
-								}
-								
-								// 设置MTU
-								that.setBLEMTU(that.MTU);
-								
-								setTimeout(() => {
-									// 发现OTA服务并获取特征值
-									that.findFirmwareOTAService().then(() => {
+					// 尝试连接到设备（先试OTA MAC（末字节+1），失败再试原始MAC）（bootloader进OTA后MAC+1）
+						function tryConnect(dId) {
+							uni.createBLEConnection({
+								deviceId: dId,
+								success: res => {
+									console.log('OTA模式重连成功, deviceId:', dId);
+									that.connected = true;
+									// 确保equipment中有设备信息
+									if (!that.equipment || that.equipment.length === 0) {
+										that.equipment = [{ deviceId: dId, name: '' }];
+									} else {
+										that.equipment[0].deviceId = dId;
+									}
+									
+									// 设置MTU
+									that.setBLEMTU(that.MTU);
+									
+									setTimeout(() => {
+										// 发现OTA服务并获取特征值
+										that.findFirmwareOTAService().then(() => {
+											uni.hideToast();
+											console.log('OTA服务就绪，开始固件升级');
+											// 开始固件OTA升级
+											that.TxUpdate_Firmware();
+										}).catch(err => {
+											uni.hideToast();
+											console.error('OTA服务发现失败:', err);
+											that.toast('OTA服务发现失败: ' + (err.errMsg || err));
+											that.ota_reconnecting = false;
+											that.lockInterface = false;
+										});
+									}, 1500);
+								},
+								fail: e => {
+									console.error('连接失败 deviceId=' + dId + ':', e);
+									// 当前尝试的是OTA MAC且失败 → 回退试原始MAC
+									let originalId = that.ota_reconnect_device_id;
+									if (dId !== originalId) {
+										console.log('OTA MAC失败，尝试原始MAC:', originalId);
+										tryConnect(originalId);
+									} else {
 										uni.hideToast();
-										console.log('OTA服务就绪，开始固件升级');
-										// 开始固件OTA升级
-										that.TxUpdate_Firmware();
-									}).catch(err => {
-										uni.hideToast();
-										console.error('OTA服务发现失败:', err);
-										that.toast('OTA服务发现失败: ' + (err.errMsg || err));
+										that.toast('OTA重连失败，请靠近设备重试');
 										that.ota_reconnecting = false;
 										that.lockInterface = false;
-									});
-								}, 1500);
-							},
-							fail: e => {
-								console.error('连接失败 deviceId=' + dId + ':', e);
-								// 如果原始MAC连接失败，尝试OTA MAC（末字节+1）
-								if (dId === originalDeviceId) {
-									let otaDeviceId = that.getOTAMacAddress(originalDeviceId);
-									console.log('尝试OTA MAC:', otaDeviceId);
-									tryConnect(otaDeviceId);
-								} else {
-									uni.hideToast();
-									that.toast('OTA重连失败，请靠近设备重试');
-									that.ota_reconnecting = false;
-									that.lockInterface = false;
+									}
 								}
-							}
-						});
-					}
-					
-					tryConnect(originalDeviceId);
+							});
+						}
+						// 进OTA后bootloader的MAC=原MAC+1，优先尝试OTA MAC，省去30s超时
+						tryConnect(that.getOTAMacAddress(that.ota_reconnect_device_id));
 				},
 				
 				// 计算OTA bootloader的MAC地址（末字节+1）
@@ -2908,5 +2908,32 @@
 		height: 100%;
 		background-image: linear-gradient(to bottom, #9bdeff 0%, #cdf0ff 40%, #ffffff 70%); 
 	}
-	
+
+	/* 升级模式选择：两个按钮水平排布并留间距 */
+.mode-select{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 30rpx 0;
+	gap: 30rpx;
+}
+.mode-btn{
+	width: 100%; 
+	box-sizing: border-box;
+	white-space: nowrap; 
+	overflow: hidden;   
+	padding: 15rpx 60rpx !important;
+}
+
+.mode-btn::after{
+	border: none;
+}
+.mode-btn{
+		padding-left: 40rpx !important;
+		padding-right: 40rpx !important;
+	}
+::v-deep .mode-btn text{
+		padding: 0 100rpx;
+		}
+
 </style>

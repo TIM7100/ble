@@ -274,4 +274,30 @@ body{
 		height: 100%;
 		background-image: linear-gradient(to bottom, #9bdeff 0%, #cdf0ff 40%, #ffffff 70%);
 }
-	
+
+	/* 升级模式选择：两个按钮水平排布并留间距 */
+.mode-select{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0.9375rem 0;
+	gap: 0.9375rem;
+}
+.mode-btn{
+	width: 100%; 
+	box-sizing: border-box;
+	white-space: nowrap; 
+	overflow: hidden;   
+	padding: 0.46875rem 1.875rem !important;
+}
+.mode-btn::after{
+	border: none;
+}
+.mode-btn{
+		padding-left: 1.25rem !important;
+		padding-right: 1.25rem !important;
+}
+ .mode-btn uni-text{
+		padding: 0 3.125rem;
+}
+

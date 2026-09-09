@@ -373,7 +373,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), T = b, C = I('{"address":["127.0.0.1","172.18.1.145"],"servePort":7000,"debugPort":9000,"initialLaunchType":"local","skipFiles":["<node_internals>/**","E:/uniapp/HBuilderX/plugins/unicloud/**/*.js"]}'), P = I('[{"provider":"alipay","spaceName":"blep","spaceId":"env-00jy66zmic85","spaceAppId":"2021005146685771","accessKey":"1TS6tuR4aFJhd2bH","secretKey":"jmeOhiRl1LXuU8BM","endpoint":"https://env-00jy66zmic85.api-hz.cloudbasefunction.cn"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), T = b, C = I('{"address":["127.0.0.1","172.18.1.145"],"servePort":7001,"debugPort":9001,"initialLaunchType":"local","skipFiles":["<node_internals>/**","E:/uniapp/HBuilderX/plugins/unicloud/**/*.js"]}'), P = I('[{"provider":"alipay","spaceName":"blep","spaceId":"env-00jy66zmic85","spaceAppId":"2021005146685771","accessKey":"1TS6tuR4aFJhd2bH","secretKey":"jmeOhiRl1LXuU8BM","endpoint":"https://env-00jy66zmic85.api-hz.cloudbasefunction.cn"}]') || [];
   let E = "";
   try {
     E = "__UNI__F83CD93";
@@ -4200,10 +4200,10 @@ ${i3}
             },
             fail: (e2) => {
               formatAppLog("error", "at pages/index/index.vue:1815", "连接失败 deviceId=" + dId + ":", e2);
-              if (dId === originalDeviceId) {
-                let otaDeviceId = that2.getOTAMacAddress(originalDeviceId);
-                formatAppLog("log", "at pages/index/index.vue:1819", "尝试OTA MAC:", otaDeviceId);
-                tryConnect(otaDeviceId);
+              let originalId = that2.ota_reconnect_device_id;
+              if (dId !== originalId) {
+                formatAppLog("log", "at pages/index/index.vue:1819", "OTA MAC失败，尝试原始MAC:", originalId);
+                tryConnect(originalId);
               } else {
                 uni.hideToast();
                 that2.toast("OTA重连失败，请靠近设备重试");
@@ -4213,7 +4213,7 @@ ${i3}
             }
           });
         }
-        tryConnect(originalDeviceId);
+        tryConnect(that2.getOTAMacAddress(that2.ota_reconnect_device_id));
       },
       // 计算OTA bootloader的MAC地址（末字节+1）
       getOTAMacAddress(mac) {
@@ -4872,16 +4872,28 @@ ${i3}
           key: 0,
           class: "mode-select"
         }, [
-          vue.createElementVNode("button", {
-            type: "primary",
-            class: "mode-btn",
-            onClick: _cache[1] || (_cache[1] = ($event) => $options.startUpgrade(false))
-          }, " HP9数据升级 "),
-          vue.createElementVNode("button", {
-            type: "primary",
-            class: "mode-btn",
-            onClick: _cache[2] || (_cache[2] = ($event) => $options.startUpgrade(true))
-          }, " 固件OTA升级 ")
+          vue.createElementVNode(
+            "button",
+            {
+              type: "primary",
+              class: "mode-btn",
+              onClick: _cache[1] || (_cache[1] = ($event) => $options.startUpgrade(false))
+            },
+            vue.toDisplayString(_ctx.$t("index.hp9DataUpgrade")),
+            1
+            /* TEXT */
+          ),
+          vue.createElementVNode(
+            "button",
+            {
+              type: "primary",
+              class: "mode-btn",
+              onClick: _cache[2] || (_cache[2] = ($event) => $options.startUpgrade(true))
+            },
+            vue.toDisplayString(_ctx.$t("index.fwOTAUpgrade")),
+            1
+            /* TEXT */
+          )
         ])) : vue.createCommentVNode("v-if", true),
         vue.createElementVNode(
           "button",
@@ -4898,7 +4910,7 @@ ${i3}
           vue.createElementVNode(
             "text",
             { class: "uni-update_tips" },
-            vue.toDisplayString(_ctx.$t("Upgrade.Upgrading")),
+            vue.toDisplayString($data.fw_ota_mode ? _ctx.$t("Upgrade.OTAUpgrading") : _ctx.$t("Upgrade.Upgrading")),
             1
             /* TEXT */
           ),
@@ -6220,6 +6232,8 @@ ${i3}
     "index.component": "Component",
     "index.api": "API",
     "index.schema": "Schema",
+    "index.hp9DataUpgrade": "HP9 Data Upgrade",
+    "index.fwOTAUpgrade": "Firmware OTA Upgrade",
     "index.language": "Language/语言",
     "index.language-info": "Settings",
     "index.system-language": "System language",
@@ -6233,8 +6247,8 @@ ${i3}
     "BLE.connect": "Connect Bluetooth devices",
     "BLE.disconnect": "Disconnect Bluetooth",
     "BLE.series": "Series",
-    "BLE.Local_version": "Local version",
-    "BLE.Cloud_version": "Cloud version",
+    "BLE.Local_version": "Local HP9 data version",
+    "BLE.Cloud_version": "Cloud HP9 data version",
     "index.version_error": "Version error, please update again",
     "index.finded": "device has been discovered",
     "BLE.RSSI": "RSSI",
@@ -6276,7 +6290,8 @@ ${i3}
     "notify.info_8": "Failed to update data:8",
     "notify.info_9": "The chip series does not match",
     "Upgrade.Progress": "Upgrade progress",
-    "Upgrade.Upgrading": "During the upgrade, please do not disconnect from the chip"
+    "Upgrade.Upgrading": "During the upgrade, please do not disconnect from the chip",
+    "Upgrade.OTAUpgrading": "During the upgrade, please do not disconnect the Bluetooth connection"
   };
   const zhHans = {
     "locale.auto": "系统",
@@ -6289,6 +6304,8 @@ ${i3}
     "index.component": "组件",
     "index.api": "API",
     "index.schema": "Schema",
+    "index.hp9DataUpgrade": "HP9数据升级",
+    "index.fwOTAUpgrade": "固件OTA升级",
     "index.language": "语言/Language",
     "index.language-info": "语言信息",
     "index.system-language": "系统语言",
@@ -6303,8 +6320,8 @@ ${i3}
     "BLE.mode": "升级模式",
     "BLE.disconnect": "断开蓝牙连接",
     "BLE.series": "系列",
-    "BLE.Local_version": "本地版本号",
-    "BLE.Cloud_version": "云端版本号",
+    "BLE.Local_version": "本地HP9数据版本",
+    "BLE.Cloud_version": "云端HP9数据版本",
     "index.version_error": "版本出错，请重新更新",
     "index.finded": "台设备被发现",
     "BLE.RSSI": "信号强度",
@@ -6346,7 +6363,8 @@ ${i3}
     "notify.info_8": "更新数据失败:8",
     "notify.info_9": "芯片系列不符",
     "Upgrade.Progress": "升级进度",
-    "Upgrade.Upgrading": "升级中，请勿断开与芯片连接"
+    "Upgrade.Upgrading": "升级中，请勿断开与芯片连接",
+    "Upgrade.OTAUpgrading": "升级中，请勿断开蓝牙连接"
   };
   const messages = {
     en,
