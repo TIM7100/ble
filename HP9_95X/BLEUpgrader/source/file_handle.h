@@ -5,24 +5,24 @@
 
 #define MAC_ADDRESS						0x4000
 #define VERSION_LEN                     10
-#define SAVE_FILE_INFO_ADDRESS          0x1100E000		//нд╪Чпео╒╣ьж╥
-#define SAVE_FLASH_START_ADDRESS		0x11024000UL    //нд╪Ч╢Ф╢╒фПй╪╣ьж╥
-#define SAVE_FLASH_END_ADDRESS			((uint32)0x1103F000UL)    //нд╪Ч╢Ф╢╒╫АйЬ╣ьж╥
+#define SAVE_FILE_INFO_ADDRESS          0x11040000		//Ф√┤Д╩╤Д©║Ф│╞Е°╟Е²─О╪┬Г╖╩Е┤╨BootloaderЕ▄╨Е÷÷О╪┴//О©╫д╪О©╫О©╫О©╫о╒О©╫О©╫ж╥
+#define SAVE_FLASH_START_ADDRESS		0x11034000UL    //О©╫д╪О©╫О©╫Ф╢╒О©╫О©╫й╪О©╫О©╫ж╥
+#define SAVE_FLASH_END_ADDRESS			((uint32)0x1103F000UL)    //О©╫д╪О©╫О©╫Ф╢╒О©╫О©╫О©╫О©╫О©╫О©╫ж╥
 
-#define ONE_SECTOR_SIZE                 0x1000			//Flash р╩╦ЖихгЬ╣д╢Сп║н╙0x1000 ╪х 4096Byte
+#define ONE_SECTOR_SIZE                 0x1000			//Flash р╩О©╫О©╫О©╫О©╫О©╫О©╫О©╫д╢О©╫п║н╙0x1000 О©╫О©╫ 4096Byte
 
 #define file_deaes_success           0
 #define file_deaes_continue          1
 
 
 typedef enum {
-	FILE_DOWNLOADED = 0,		//нд╪ЧобтьмЙЁи
-	FILE_DOWNLOADING,			//нд╪Чобтьжп
-	FILE_DOWNLOAD_ERR,          //нд╪Чобть╢МнС
-	FILE_AES_ING				//нд╪Ч╫Бцэжп
+	FILE_DOWNLOADED = 0,		//О©╫д╪О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	FILE_DOWNLOADING,			//О©╫д╪О©╫О©╫О©╫О©╫О©╫О©╫О©╫
+	FILE_DOWNLOAD_ERR,          //О©╫д╪О©╫О©╫О©╫О©╫ь╢О©╫О©╫О©╫
+	FILE_AES_ING				//О©╫д╪О©╫О©╫О©╫О©╫О©╫О©╫О©╫
 }FILE_STATE_t;
 
-// ╩Ях║FLASHжп╠ё╢Фнд╪Ч╣дв╢л╛
+// О©╫О©╫х║FLASHО©╫п╠О©╫О©╫О©╫О©╫д╪О©╫О©╫О©╫в╢л╛
 typedef enum
 {
 	FILE_SUCCESS,
@@ -39,7 +39,7 @@ typedef enum {
 	HP_97X = 3
 }HP9_SERIES_CODE_t;
 
-//п╬ф╛юЮпм
+//п╬ф╛О©╫О©╫О©╫О©╫
 enum Type
 {
     HP952XLK = 0,
@@ -118,7 +118,7 @@ enum Type
     HP97UAM,
     HP97UAY,
 
-    //ртио╣д╡╩дэ╦д,95U/97P[а╛╧╘]╪стз╨СцФ,993/99W
+    //О©╫О©╫О©╫о╣д╡О©╫О©╫э╦О©╫,95U/97P[О©╫О©╫О©╫О©╫]О©╫О©╫О©╫з╨О©╫О©╫О©╫,993/99W
     HP95UXLK,
     HP95UXLC,
     HP95UXLM,

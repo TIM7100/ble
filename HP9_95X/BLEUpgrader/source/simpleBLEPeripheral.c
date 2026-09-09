@@ -119,7 +119,7 @@
 #define GPIO_RED      P7
 
 //外部写入名称地址
-#define DEVICE_NAME_FLASH_ADDR  0x1101C000
+#define DEVICE_NAME_FLASH_ADDR  0x1100F000
 
 
 /*********************************************************************

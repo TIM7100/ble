@@ -334,76 +334,9 @@ static simpleProfileCBs_t simpleBLEPeripheral_SimpleProfileCBs =
 void OTATEST_Event_Init( uint8 task_id )
 {
     simpleBLEPeripheral_TaskID = task_id;
-    // Setup the GAP
-    VOID GAP_SetParamValue( TGAP_CONN_PAUSE_PERIPHERAL, DEFAULT_CONN_PAUSE_PERIPHERAL );
-    // Setup the GAP Peripheral Role Profile
-    {
-        // device starts advertising upon initialization
-        uint8 initial_advertising_enable = FALSE;
-        uint8 enable_update_request = DEFAULT_ENABLE_UPDATE_REQUEST;
-        uint8 advChnMap = GAP_ADVCHAN_37 | GAP_ADVCHAN_38 | GAP_ADVCHAN_39;
-        // By setting this to zero, the device will go into the waiting state after
-        // being discoverable for 30.72 second, and will not being advertising again
-        // until the enabler is set back to TRUE
-        uint16 gapRole_AdvertOffTime = 0;
-        uint16 desired_min_interval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
-        uint16 desired_max_interval = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
-        uint16 desired_slave_latency = DEFAULT_DESIRED_SLAVE_LATENCY;
-        uint16 desired_conn_timeout = DEFAULT_DESIRED_CONN_TIMEOUT;
-        uint8 peerPublicAddr[] =
-        {
-            0x01,
-            0x02,
-            0x03,
-            0x04,
-            0x05,
-            0x06
-        };
-        uint8 advType =g_current_advType1;// LL_ADV_NONCONNECTABLE_UNDIRECTED_EVT;//LL_ADV_SCANNABLE_UNDIRECTED_EVT;//LL_ADV_CONNECTABLE_LDC_DIRECTED_EVT;//;    // it seems a  bug to set GAP_ADTYPE_ADV_NONCONN_IND = 0x03
-        GAPRole_SetParameter( GAPROLE_ADV_EVENT_TYPE, sizeof( uint8 ), &advType );
-        GAPRole_SetParameter(GAPROLE_ADV_DIRECT_ADDR, sizeof(peerPublicAddr), peerPublicAddr);
-        // set adv channel map
-        GAPRole_SetParameter(GAPROLE_ADV_CHANNEL_MAP, sizeof(uint8), &advChnMap);
-        // Set the GAP Role Parameters
-        GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
-        GAPRole_SetParameter( GAPROLE_ADVERT_OFF_TIME, sizeof( uint16 ), &gapRole_AdvertOffTime );
-        osal_memcpy(&scanRspData[2],attDeviceName,0x11);
-        GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof ( scanRspData ), scanRspData );
-        GAPRole_SetParameter( GAPROLE_ADVERT_DATA, sizeof( advertData ), advertData );
-        GAPRole_SetParameter( GAPROLE_PARAM_UPDATE_ENABLE, sizeof( uint8 ), &enable_update_request );
-        GAPRole_SetParameter( GAPROLE_MIN_CONN_INTERVAL, sizeof( uint16 ), &desired_min_interval );
-        GAPRole_SetParameter( GAPROLE_MAX_CONN_INTERVAL, sizeof( uint16 ), &desired_max_interval );
-        GAPRole_SetParameter( GAPROLE_SLAVE_LATENCY, sizeof( uint16 ), &desired_slave_latency );
-        GAPRole_SetParameter( GAPROLE_TIMEOUT_MULTIPLIER, sizeof( uint16 ), &desired_conn_timeout );
-    }
-    // Set the GAP Characteristics
-    GGS_SetParameter( GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName );
-    // Set advertising interval
-    {
-        uint16 advInt = 800;//2400;//1600;//1600;//800;//1600;   // actual time = advInt * 625us
-        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
-        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
-        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
-        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
-    }
-    #if(DEF_GAPBOND_MGR_ENABLE==1)
-    // Setup the GAP Bond Manager, add 2017-11-15
-    {
-        uint32 passkey = DEFAULT_PASSCODE;
-        uint8 pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
-        uint8 mitm = TRUE;
-        uint8 ioCap = GAPBOND_IO_CAP_NO_INPUT_NO_OUTPUT;
-        uint8 bonding = TRUE;
-        GAPBondMgr_SetParameter( GAPBOND_DEFAULT_PASSCODE, sizeof ( uint32 ), &passkey );
-        GAPBondMgr_SetParameter( GAPBOND_PAIRING_MODE, sizeof ( uint8 ), &pairMode );
-        GAPBondMgr_SetParameter( GAPBOND_MITM_PROTECTION, sizeof ( uint8 ), &mitm );
-        GAPBondMgr_SetParameter( GAPBOND_IO_CAPABILITIES, sizeof ( uint8 ), &ioCap );
-        GAPBondMgr_SetParameter( GAPBOND_BONDING_ENABLED, sizeof ( uint8 ), &bonding );
-    }
-    #endif
+    // Task 8 (SimpleBLEPeripheral_Init) 已完成 GAP/GATT/Bond 系统初始化
+    // 此处只注册 Task 9 独有的 OTA 服务和 SimpleProfile，避免重复初始化导致连接冲突
     // Initialize GATT attributes
-    GGS_AddService( GATT_ALL_SERVICES );            // GAP
-    GATTServApp_AddService( GATT_ALL_SERVICES );    // GATT attributes
     //DevInfo_AddService();                           // Device Information Service
     ota_app_AddService1();
     SimpleProfile_AddService( GATT_ALL_SERVICES );  // Simple GATT Profile
@@ -466,8 +399,7 @@ void OTATEST_Event_Init( uint8 task_id )
     #endif
     // Setup a delayed profile startup
     osal_set_event( simpleBLEPeripheral_TaskID, SBP_START_DEVICE_EVT );
-    // for receive HCI complete message
-    GAP_RegisterForHCIMsgs(simpleBLEPeripheral_TaskID);
+    // GAP_RegisterForHCIMsgs 由 Task 8 完成，此处不重复（避免覆盖 Task 8 的 HCI 消息路由）
     #if(APP_CFG_RPA_TEST)
     // ========================= For Resolving Private Address testing
     uint8 addrType = ADDRTYPE_PUBLIC;
@@ -518,14 +450,7 @@ uint16 OTATEST_Event( uint8 task_id, uint16 events )
 
     if ( events & SBP_START_DEVICE_EVT )
     {
-        // Start the Device
-        VOID GAPRole_StartDevice( &simpleBLEPeripheral_PeripheralCBs );
-        #if(DEF_GAPBOND_MGR_ENABLE==1)
-        // Start Bond Manager, 2017-11-15
-        VOID GAPBondMgr_Register( &simpleBLEPeripheral_BondMgrCBs );
-        #endif
-        // Set timer for first periodic event
-        //osal_start_timerEx( simpleBLEPeripheral_TaskID, SBP_PERIODIC_EVT, SBP_PERIODIC_EVT_PERIOD );
+        // GAPRole_StartDevice 和 GAPBondMgr_Register 由 Task 8 完成，此处不重复
         HCI_LE_ReadResolvingListSizeCmd();
         return ( events ^ SBP_START_DEVICE_EVT );
     }

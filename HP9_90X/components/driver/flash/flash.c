@@ -343,7 +343,7 @@ int hal_flash_read(uint32_t addr, uint8_t* data, uint32_t size)
     return PPlus_SUCCESS;
 }
 
-int hal_flash_write(uint32_t addr, uint8_t* data, uint32_t size)
+__ATTR_SECTION_SRAM__  int hal_flash_write(uint32_t addr, uint8_t* data, uint32_t size)
 {
     uint8_t retval;
     #if(FLASH_PROTECT_FEATURE == 1)
@@ -385,7 +385,7 @@ int hal_flash_write_by_dma(uint32_t addr, uint8_t* data, uint32_t size)
     return retval;
 }
 
-int hal_flash_erase_sector(unsigned int addr)
+__ATTR_SECTION_SRAM__  int hal_flash_erase_sector(unsigned int addr)
 {
     uint8_t retval;
     #if(FLASH_PROTECT_FEATURE == 1)

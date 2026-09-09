@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(Select-String -Path \"E:\\\\ble\\\\HP9_9X\\\\BLEUpgrader\\\\bin\\\\simpleBlePeripheral_phy6222.hexf\" -Pattern \"^:\" | ForEach-Object { if \\($_.Line -match \"^:02\\([0-9A-F]{4}\\)04\"\\) { $matches[1] } } | Select-Object -Unique | Sort-Object)",
-      "PowerShell(Get-Content \"E:\\\\ble\\\\HP9_9X\\\\BLEUpgrader\\\\bin\\\\simpleBlePeripheral_phy6222.hexf\" | Where-Object { $_ -match \"^:02000004\" } | Select-Object -First 20)",
-      "PowerShell(Get-Item *)"
-    ]
-  }
-}
