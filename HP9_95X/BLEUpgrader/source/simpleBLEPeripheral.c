@@ -119,7 +119,7 @@
 #define GPIO_RED      P7
 
 //外部写入名称地址
-#define DEVICE_NAME_FLASH_ADDR  0x1100F000
+#define DEVICE_NAME_FLASH_ADDR  0X1100F000
 
 
 /*********************************************************************
@@ -806,7 +806,7 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
 //        osal_memcpy(&scanRspData[9], &str_addr[4],10);
 //        osal_memcpy(&attDeviceName[7], &str_addr[4],10);
 
-        osal_memcpy(&str_addr[0],bdAddr2Str((uint8*)0x1101C000),14);
+        osal_memcpy(&str_addr[0],bdAddr2Str((uint8*)0X1100F000),14);
         osal_memcpy(&scanRspData[11], &str_addr[6],5);
         osal_memcpy(&attDeviceName[9], &str_addr[6],5);
 				

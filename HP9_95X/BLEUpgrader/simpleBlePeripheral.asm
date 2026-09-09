@@ -26614,7 +26614,7 @@
         0x11027358:    a905        ..      ADD      r1,sp,#0x14
         0x1102735a:    0080        ..      LSLS     r0,r0,#2
         0x1102735c:    f7f9fd4e    ..N.    BL       GAPRole_GetParameter ; 0x11020dfc
-        0x11027360:    482f        /H      LDR      r0,[pc,#188] ; [0x11027420] = 0x1101c000
+        0x11027360:    482f        /H      LDR      r0,[pc,#188] ; [0x11027420] = 0x1100f000
         0x11027362:    f7fbff71    ..q.    BL       bdAddr2Str ; 0x11023248
         0x11027366:    4601        .F      MOV      r1,r0
         0x11027368:    220e        ."      MOVS     r2,#0xe
@@ -26688,7 +26688,7 @@
         0x11027414:    54535f45    E_ST    DCD    1414750021
         0x11027418:    45545241    ARTE    DCD    1163153985
         0x1102741c:    00000044    D...    DCD    68
-        0x11027420:    1101c000    ....    DCD    285327360
+        0x11027420:    1100f000    ....    DCD    285274112
         0x11027424:    00000305    ....    DCD    773
         0x11027428:    52415453    STAR    DCD    1380013139
         0x1102742c:    41472054    T GA    DCD    1095180372
@@ -33109,7 +33109,7 @@
 
     Input Comments:
     
-    p1a64-3
+    p5844-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33170,7 +33170,7 @@
 
     Input Comments:
     
-    p960-3
+    pb2c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
