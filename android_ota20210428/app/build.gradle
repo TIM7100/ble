@@ -1,0 +1,66 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.phy.OTAsdkdemo"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode 4
+        versionName "1.0.3"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        releaseConfig {
+            keyAlias 'test'
+            keyPassword 'test123'
+            storeFile file('test')
+            storePassword 'test123'
+        }
+    }
+
+    // 自定义打包名称
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "OTA_v${versionName}.apk"
+        }
+    }
+
+    buildTypes {
+
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.releaseConfig
+            }
+
+        debug{
+            minifyEnabled false
+            signingConfig signingConfigs.releaseConfig
+            }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'   // aar目录
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation 'pub.devrel:easypermissions:1.0.1'
+
+    implementation 'no.nordicsemi.android.support.v18:scanner:1.0.0'
+    //gson
+    implementation 'com.google.code.gson:gson:2.8.7'
+
+    implementation project(':phy_ota_sdk')
+    //compile(name: 'phy_ota_sdk-1.0.6', ext: 'aar')
+}

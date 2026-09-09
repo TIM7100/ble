@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">PHYAPP</string>
+    <string name="main_title">PhyPlus</string>
+    <string name="connect_device">连接</string>
+    <string name="disconnect_device">断开</string>
+
+    <string name="connected_device">已连接设备：%s</string>
+    <string name="unconnected_device">已连接设备：未连接</string>
+    <string name="battery_status">电池状态：%s</string>
+    <string name="unconnected_battery_status">电池状态：无</string>
+    <string name="app_version">App版本：%s</string>
+    <string name="app_bootload_version">App版本：%1$s&#160;&#160;&#160;&#160;BootLoad版本：%2$s</string>
+    <string name="app_ota_bootload_version">App版本：%s&#160;&#160;&#160;&#160;OTA模式</string>
+
+    <string name="search_title">连接设备</string>
+    <string name="device_search_fail">未搜索到设备,请重新搜索</string>
+    <string name="label_bluetooth_closed">蓝牙未开启</string>
+    <string name="label_location_tips">请允许应用获取地理位置</string>
+    <string name="label_read_tips">请允许应用读取文件</string>
+    <string name="label_start_search">搜索</string>
+    <string name="label_stop_search">停止</string>
+    <string name="label_connecting_tips">正在连接设备</string>
+    <string name="label_signal_dbm">%sdBm</string>
+
+    <string name="label_sensor">传感器</string>
+    <string name="label_heart_rate">心率</string>
+    <string name="label_push">推送消息</string>
+    <string name="label_console">LED灯控</string>
+    <string name="label_keyboard">键盘功能</string>
+    <string name="label_ota">OTA</string>
+
+    <string name="label_connect_fail">连接失败</string>
+    <string name="label_unconnect_device">未连接设备</string>
+
+    <string name="lablel_call">来电提醒</string>
+    <string name="lablel_message">短信/微信提醒</string>
+    <string name="message_text">短信消息</string>
+    <string name="wechat_text">微信消息</string>
+
+    <string name="title_tips">Title</string>
+    <string name="message_tips">This is test message</string>
+    <string name="no_call_tips">无来电</string>
+    <string name="message_null_tips">内容不能为空</string>
+    <string name="title_null_tips">标题不能为空</string>
+    <string name="send_success_tips">发送成功</string>
+
+    <string name="start_resource_update">开始升级</string>
+
+
+</resources>

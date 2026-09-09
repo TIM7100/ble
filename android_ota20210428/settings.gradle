@@ -1,0 +1,1 @@
+include ':app', ':phy_ota_sdk'

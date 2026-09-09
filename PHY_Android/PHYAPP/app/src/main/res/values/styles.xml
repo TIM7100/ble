@@ -1,0 +1,21 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/color_2ead4d</item>
+        <item name="colorPrimaryDark">@color/color_2ead4d</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:actionBarSize">@dimen/size_dp_50</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme_stateBar_white" parent="AppTheme">
+        <item name="colorPrimaryDark">@android:color/white</item>
+    </style>
+
+    <style name="splash_tyle" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@mipmap/splash</item>
+    </style>
+
+</resources>

@@ -1,0 +1,74 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.phy.app"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 21
+        versionName "1.2.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        releaseConfig {
+            keyAlias 'phy'
+            keyPassword 'phy123'
+            storeFile file('phy.keystore')
+            storePassword 'phy123'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.releaseConfig
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        applicationVariants.all { variant ->
+
+            variant.outputs.each { output ->
+                if (!variant.buildType.isDebuggable()) {
+                    //获取签名的名字 variant.signingConfig.name
+                    //替换的字符串
+                    def replaceFile = "app_${variant.versionName}.apk"
+                    output.outputFileName = replaceFile
+                }
+            }
+        }
+    }
+
+
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'   // aar目录
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    compile 'pub.devrel:easypermissions:1.0.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.github.warkiz.widget:indicatorseekbar:1.2.9'
+    implementation files('libs/achartengine-1.2.0.jar')
+    compile 'no.nordicsemi.android.support.v18:scanner:1.0.0'
+
+    compile(name: 'phy_ota_sdk-1.0.7', ext: 'aar')
+}

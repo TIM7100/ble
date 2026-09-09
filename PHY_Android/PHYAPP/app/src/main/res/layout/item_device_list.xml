@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:layout_height="@dimen/size_dp_60">
+
+    <LinearLayout
+        android:id="@+id/first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/size_dp_10">
+        <ImageView
+            android:layout_width="@dimen/size_dp_20"
+            android:layout_height="@dimen/size_dp_20"
+            android:id="@+id/signal_image"/>
+        <TextView
+            android:id="@+id/signal_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_dp_3"
+            android:textSize="@dimen/text_size_sp_12"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_toRightOf="@id/first"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/size_dp_30">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_sp_16"
+            android:id="@+id/name_text"/>
+        <TextView
+            android:id="@+id/mac_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_dp_3"
+            android:textSize="@dimen/text_size_sp_14"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/type_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/size_dp_10"/>
+
+</RelativeLayout>
