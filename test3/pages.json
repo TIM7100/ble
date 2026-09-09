@@ -1,0 +1,43 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "%index.title%"
+			}
+		},
+		{
+			"path": "pages/setup/setup",
+			"style": {
+				"navigationBarTitleText": "%index.settings%",
+				"backgroundColor": "#d9d9d9"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		// "navigationBarTitleText": "BLE",
+		"navigationBarBackgroundColor": "#9bdeff",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "#1a1a1a",
+		"selectedColor": "#3ebdff",
+		"backgroundColor": "#fffffff",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/home_2.png",
+				"selectedIconPath": "static/home.png",
+				"text": "%index.home%"
+			},
+			{
+				"pagePath": "pages/setup/setup",
+				"iconPath": "static/setup_2.png",
+				"selectedIconPath": "static/setup.png",
+				"text": "%index.settings%"
+			}
+		]
+	}
+}
