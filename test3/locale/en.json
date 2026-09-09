@@ -30,6 +30,8 @@
   "BLE.series":"Series",
   "BLE.Local_version":"Local HP9 data version",
   "BLE.Cloud_version":"Cloud HP9 data version",
+  "BLE.FW_Local_version":"Firmware local version",
+  "BLE.FW_Cloud_version":"Firmware cloud version",
   "index.version_error":"Version error, please update again",
   "index.finded":"device has been discovered",
   "BLE.RSSI":"RSSI",

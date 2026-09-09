@@ -30,7 +30,7 @@
 				<view class="textbox" mode="aspectFill">
 					
 					<view v-if="updata_version_last !== '20140101' " >
-					
+						
 						<view class="text_title" :key="versionkey">{{$t('BLE.Local_version')}}{{":" + updata_version_before}}</view>
 						<view class="text_title" :key="versionkey">{{$t('BLE.Cloud_version')}}{{":" + server_version}}</view>
 	
@@ -40,6 +40,10 @@
 						<view class="text_title">{{$t('index.version_error')}}<!-- 版本出错，请重新更新 --></view>
 					
 					</view>
+					
+					<!-- 固件版本：本地 + 云端 -->
+					<view class="text_title">{{$t('BLE.FW_Local_version')}}{{":" + (fw_ota_local_version || '0000000000')}}</view>
+					<view class="text_title">{{$t('BLE.FW_Cloud_version')}}{{":" + (fw_ota_version || '--')}}</view>
 				</view>
 				
 				<!-- 升级模式选择 -->
@@ -176,6 +180,8 @@
 			ota_rsp: null,        // 最近收到的OTA响应字节
 			ota_rsp_ready: false, // OTA响应就绪标志
 			ota_rsp_extra: null,  // OTA响应附带数据（如sector号）
+			ota_ver_rsp: null,    // 固件OTA版本对比响应('4')：'Newest'/'Updata'/'NO_CMD'
+			ota_get_ver_pending: false,  // 正在请求固件返回本地版本('6')，通知回调据此接收版本串
 				
 				chatMessage: '', // 用户输入的聊天消息 
 				chatMessage_size: null,	//用户输入的聊天消息长度
@@ -203,6 +209,7 @@
 				updata_version_last:"",	//更新之后的版本
 				server_version:"",//服务器版本
 				fw_ota_version:"",		//固件OTA云版本
+				fw_ota_local_version:"0000000000",	//固件本地版本(读自固件)
 				fw_ota_url:"",			//固件OTA下载链接
 				versionkey:0,	//用于版本号刷新时的显示 
 				
@@ -419,7 +426,7 @@
 					// 固件OTA模式：查询 "IAP" 集合
 						if (that.fw_ota_mode) {
 								db.collection('IAP').where({
-									name : new RegExp('IAPHP9')		//获取数据库中name包含IAPHP9的数据包
+									name : new RegExp('^' + that.chip_name)		//获取数据库中name包含对应固件数据的数据包
 								}).get().then( async(res) => {
 									console.log(res);
 									uni.hideToast();  // 关闭"正在检测"提示
@@ -440,6 +447,21 @@
 										return;
 									}
 									
+									// 先对比固件本地OTA版本与云端版本，决定是否需要下载/升级
+									uni.showToast({
+										title: '正在检查固件版本...',
+										icon: 'none',
+										duration: 99999,
+									});
+									const verRes = await that.compareOtaVersion(that.fw_ota_version);
+									if (verRes === 'Newest') {
+										uni.hideToast();
+										that.toast('已是最新版本，无需升级');
+										that.fw_ota_mode = false;
+										that.lockInterface = false;
+										return;
+									}
+									
 									// 下载固件文件
 									uni.showToast({
 										title: '正在下载固件...',
@@ -447,7 +469,7 @@
 										duration: 99999,
 									});
 									
-									await that.createDownload(that.fw_ota_url).then(path_data => {
+									await that.createDownload(that.fw_ota_url).then(async path_data => {
 											getApp().globalData.path = path_data;
 											
 											uni.hideToast();
@@ -458,6 +480,18 @@
 											// 设备收到后会重启进入OTA Bootloader，蓝牙会断开。
 											// 断开后由 onBLEConnectionStateChange 自动重连并进入固件升级流程。
 											let deviceId = that.equipment[0].deviceId;
+											
+											// 把本次升级版本写入"待定槽"(命令'5'，写0x11042000)；
+											// boot在OTA成功后、重启前才会提升为当前版本，因此OTA失败不会误改本地版本
+											that.ota_get_ver_pending = false;   // 关掉版本读，避免'5'回的OK被当作本地版本
+											let pendVer = String(that.fw_ota_version || '');
+											if (pendVer.length > 10) pendVer = pendVer.substring(0, 10);
+											while (pendVer.length < 10) pendVer += ' ';
+											that.chatMessage = string2Hex('5' + pendVer);
+											await that.writeBLECharacteristicValue(that.connectedcharacteristicId[0]);
+											that.chatMessage = '';
+											// 等'5'写完成、避免与后续OTA触发竞争
+											await new Promise(r => setTimeout(r, 600));
 											
 											// 先发现OTA服务
 											uni.getBLEDeviceServices({
@@ -1023,6 +1057,11 @@
 							this.notifyBLECharacteristicValueChange();//获取notify
 						},300)
 						this.maskShow = false;
+						
+						// 特征值与notify就绪后读取固件版本(本地+云端)
+						setTimeout(() => {
+							this.getFwVersions();
+						}, 800);
 					},
 					fail: e => {
 						console.log('获取特征值失败，错误码：' + e.code);
@@ -1212,6 +1251,21 @@
 					this.valueChangeData.value = arrayBuffer2String(res.value);		//把订阅的回传数据从arrayBuffer转字符串
 					
 					console.log(this.valueChangeData.value);
+					
+					// 固件OTA版本对比响应('4')专用标志，避免读到其他流程遗留的旧值
+					if (this.fw_ota_mode && (this.valueChangeData.value === 'Newest' ||
+						this.valueChangeData.value === 'Updata' ||
+						this.valueChangeData.value === 'NO_CMD')) {
+						this.ota_ver_rsp = this.valueChangeData.value;
+					}
+					// 固件返回本地OTA版本('6')：取等到非状态串的版本字符串
+					if (this.ota_get_ver_pending) {
+						const vv = String(this.valueChangeData.value || '').trim();
+						if (vv && vv !== 'Newest' && vv !== 'Updata' && vv !== 'NO_CMD') {
+							this.fw_ota_local_version = vv;
+							this.ota_get_ver_pending = false;
+						}
+					}
 					
 					this.valueErrData = new Uint16Array(res.value);					//如果有丢包，则使用该变量
 					// console.log(this.valueErrData);
@@ -1443,18 +1497,75 @@
 			
 			
 			
+			//获取固件版本(本地+云端)，用于主页固件版本栏显示
+			async getFwVersions() {
+				var that = this;
+				// 1. 云端版本：查询 IAP 集合(与where里固件OTA分支一致，用chip_name开头匹配)
+				try {
+					const db = uniCloud.database();
+					const res = await db.collection('IAP').where({
+						name: new RegExp('^' + that.chip_name)
+					}).get();
+					if (res.result.data && res.result.data.length) {
+						that.fw_ota_version = res.result.data[0].version || that.fw_ota_version;
+					}
+				} catch (e) {
+					console.warn('固件云端版本查询失败:', e);
+				}
+				// 2. 本地版本：发命令'6'请求固件返回
+				that.ota_get_ver_pending = true;
+				that.chatMessage = string2Hex('6');
+				that.writeBLECharacteristicValue(that.connectedcharacteristicId[0]);
+				that.chatMessage = '';
+				await new Promise(resolve => setTimeout(resolve, 600));
+				// 超时后必须清掉标志，避免后续 '5'/'4' 的OK等通知被误当作本地版本
+				that.ota_get_ver_pending = false;
+			},
+				
+			//发送OTA固件版本对比命令('4')，返回 'Newest' 或 'Updata'
+			compareOtaVersion(cloudVersion) {
+				var that = this;
+				let ver = String(cloudVersion || '');
+				if (ver.length > 10) ver = ver.substring(0, 10);
+				while (ver.length < 10) ver += ' ';   // 补足10字节，与固件OTA_VERSION_LEN一致
+				return new Promise(resolve => {
+					that.ota_ver_rsp = null;               // 清空独立标志，只信本次写命令后的新响应
+					that.chatMessage = string2Hex('4' + ver);
+					that.writeBLECharacteristicValue(that.connectedcharacteristicId[0]);
+					that.chatMessage = '';
+					// 轮询等待固件通知 Newest / Updata / NO_CMD
+					let elapsed = 0;
+					let tick = setInterval(() => {
+						if (that.ota_ver_rsp !== null) {
+							clearInterval(tick);
+							console.log('OTA版本对比响应:', that.ota_ver_rsp);
+							if (that.ota_ver_rsp.indexOf('Newest') >= 0) resolve('Newest');
+							else resolve('Updata');   // Updata/NO_CMD/未知 → 走更新
+							return;
+						}
+						elapsed += 100;
+						if (elapsed >= 1500) {           // 超时兜底：按需更新
+							clearInterval(tick);
+							that.ota_ver_rsp = null;
+							console.warn('OTA版本对比超时，按需更新');
+							resolve('Updata');
+						}
+					}, 100);
+				});
+			},
+				
 			//获取到getJsonData读到的值并通过BLE发送，总发送流程
 			async TxUpdate(){
-				var that = this;
-				try{
-					let SectorCnt = 0;
-					let Sec = '';
-					let KCnt;
-					let CCnt;
-					let MCnt;
-					let YCnt;
-					
-					console.log(that.time);
+					var that = this;
+					try{
+						let SectorCnt = 0;
+						let Sec = '';
+						let KCnt;
+						let CCnt;
+						let MCnt;
+						let YCnt;
+						
+						console.log(that.time);
 					
 					//第一、发送第一个包
 					this.chatMessage = string2Hex('1' + this.updata_version_before) + ab2hex(numberToArrayBuffer(that.year,2)) + ab2hex(numberToArrayBuffer(that.month,1)) + ab2hex(numberToArrayBuffer(that.day,1)) + ab2hex(numberToArrayBuffer(that.hour,1)) + ab2hex(numberToArrayBuffer(that.minute,1)) + ab2hex(numberToArrayBuffer(that.second,1)) ;	//先发送版本 + 以及手机当前时间 年月日时分秒

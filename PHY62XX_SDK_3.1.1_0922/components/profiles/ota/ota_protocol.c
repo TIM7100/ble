@@ -785,6 +785,17 @@ static void partition_program(void)
         if(!s_ota_ctx.ota_resource)
             ret = write_app_boot_sector();
 
+        // [OTA] 重启前：OTA全部写入成功，把"待定固件版本"(0x11042000)提升为当前版本(0x11041000)
+        {
+            uint8 v[10];
+            if (hal_flash_read(0x11042000, v, 10) == 0 && v[0] != 0xFF)
+            {
+                hal_flash_erase_sector(0x11041000);
+                hal_flash_write(0x11041000, v, 10);
+                LOG("[OTA] promote version %.10s\n", v);
+            }
+        }
+
         s_ota_ctx.ota_state = OTA_ST_COMPLETE;
         response(OTA_RSP_OTA_COMPLETE,PPlus_SUCCESS);
     }
@@ -910,6 +921,17 @@ static void partition_program(void)
     {
         if(!s_ota_ctx.ota_resource)
             ret = write_app_boot_sector();
+
+        // [OTA] 重启前：OTA全部写入成功，把"待定固件版本"(0x11042000)提升为当前版本(0x11041000)
+        {
+            uint8 v[10];
+            if (hal_flash_read(0x11042000, v, 10) == 0 && v[0] != 0xFF)
+            {
+                hal_flash_erase_sector(0x11041000);
+                hal_flash_write(0x11041000, v, 10);
+                LOG("[OTA] promote version %.10s\n", v);
+            }
+        }
 
         s_ota_ctx.ota_state = OTA_ST_COMPLETE;
         response(OTA_RSP_OTA_COMPLETE,PPlus_SUCCESS);

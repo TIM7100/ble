@@ -35,6 +35,7 @@
 ".\objects\sbpprofile_ota.o"
 ".\objects\otaevents.o"
 ".\objects\ota_app_service1.o"
+".\objects\otafile_handle.o"
 ".\objects\startup_armcm0.o"
 ".\objects\system_armcm0.o"
 --library_type=microlib --scatter ".\scatter_load.sct"

@@ -31,6 +31,8 @@
 	"BLE.series":"系列",
 	"BLE.Local_version":"本地HP9数据版本",
 	"BLE.Cloud_version":"云端HP9数据版本",
+	"BLE.FW_Local_version":"固件本地版本号",
+	"BLE.FW_Cloud_version":"固件云端版本号",
 	"index.version_error":"版本出错，请重新更新",
 	"index.finded":"台设备被发现",
 	"BLE.RSSI":"信号强度",

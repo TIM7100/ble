@@ -47,6 +47,7 @@
 #include "error.h"
 #include "ll.h"
 #include "file_handle.h"
+#include "OTAfile_handle.h"
 #include "flash.h"
 //#include "random.h"
 
@@ -266,6 +267,45 @@ static void process_cmd(uint8* cmdbuf, uint8 size)
             response(RP_HP9_BURN_FILE_NEWEST, RP_HP9_BURN_FILE_NEWEST_LEN);
 			ble_updata_app_CBs(download_state);			//当前保存文件为最新版本，直接执行后续操作
         }
+    }
+    break;
+
+    case OTA_APP_CMD_OTA_VERSION:               			//'4' 对比OTA固件本地版本
+    {
+        static char ota_current_version[OTA_VERSION_LEN] = {0};
+        ota_get_local_version(ota_current_version);
+
+        LOG("OTA Try Version ");
+        print_hex((uint8 *)cmd.p.file_version.version, OTA_VERSION_LEN);
+        LOG("OTA Local Version ");
+        print_hex((uint8 *)ota_current_version, OTA_VERSION_LEN);
+
+        //判断版本是否需要更新，回复不同的响应
+        if (strncmp((const char*)cmd.p.file_version.version, ota_current_version, OTA_VERSION_LEN) != 0)
+        {
+            response(RP_HP9_BURN_FILE_UPDATA, RP_HP9_BURN_FILE_UPDATA_LEN);      //版本不一致，需要更新
+        }
+        else
+        {
+            response(RP_HP9_BURN_FILE_NEWEST, RP_HP9_BURN_FILE_NEWEST_LEN);      //版本一致，已是最新
+        }
+    }
+    break;
+
+    case OTA_APP_CMD_OTA_SAVE_VERSION:              	//'5' OTA成功后回写本地版本
+    {
+        uint8 ota_st = OTA_FILE_DOWNLOADED;
+        ota_set_local_version(cmd.p.file_version.version, ota_st);
+        response(RP_HP9_BURN_FILE_START_DOWNLOAD, RP_HP9_BURN_FILE_START_DOWNLOAD_LEN);
+    }
+    break;
+
+    case OTA_APP_CMD_OTA_GET_VERSION:              	//'6' 返回本地OTA固件版本(10字节)
+    {
+        uint8 ota_v[OTA_VERSION_LEN + 1];
+        osal_memset(ota_v, 0, sizeof(ota_v));
+        ota_get_local_version((char *)ota_v);
+        response((char *)ota_v, OTA_VERSION_LEN);
     }
     break;
 

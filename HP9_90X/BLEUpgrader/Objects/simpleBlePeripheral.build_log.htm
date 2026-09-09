@@ -22,18 +22,32 @@ Dialog DLL:      TARMCM1.DLL V1.14.6.0
  
 <h2>Project:</h2>
 E:\ble\SLB\HP9_90X\BLEUpgrader\simpleBlePeripheral.uvprojx
-Project File Date:  09/08/2026
+Project File Date:  09/09/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
+compiling OTAfile_handle.c...
+..\components\OTAEVENT\OTAfile_handle.h(46): warning:  #1-D: last line of file ends without a newline
+  #endif /* _OTA_FILE_HANDLE_H */
+..\components\OTAEVENT\OTAfile_handle.c(58): warning:  #1-D: last line of file ends without a newline
+  }
+..\components\OTAEVENT\OTAfile_handle.c: 2 warnings, 0 errors
 compiling UpgraderHp9Serial.c...
+compiling ota_app_service.c...
+..\components\OTAEVENT\OTAfile_handle.h(46): warning:  #1-D: last line of file ends without a newline
+  #endif /* _OTA_FILE_HANDLE_H */
+..\components\profiles\ota_app\ota_app_service.c(355): warning:  #167-D: argument of type "uint8 *" is incompatible with parameter of type "char *"
+                  response(err_rsp, download_file_info.err_index * 2 + 4);
+..\components\profiles\ota_app\ota_app_service.c(381): warning:  #167-D: argument of type "uint8 *" is incompatible with parameter of type "char *"
+          response(rsp, 6);
+..\components\profiles\ota_app\ota_app_service.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=64534 RO-data=5046 RW-data=2572 ZI-data=26532  
+Program Size: Code=64906 RO-data=5046 RW-data=2572 ZI-data=26536  
 FromELF: creating hex file...
 After Build - User command #1: fromelf.exe .\Objects\simpleBlePeripheral.axf --i32combined --output .\bin\simpleBlePeripheral.hex
 After Build - User command #2: fromelf -c -a -d -e -v -o simpleBlePeripheral.asm ./Objects/simpleBlePeripheral.axf
-".\Objects\simpleBlePeripheral.axf" - 0 Error(s), 0 Warning(s).
+".\Objects\simpleBlePeripheral.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -54,10 +68,10 @@ Package Vendor: ARM
    * Component: ARM::CMSIS:CORE:5.6.0
 
    * Component: ARM::Device:Startup:1.2.2
+      Source file:   Device/ARM/ARMCM0/Source/ARM/startup_ARMCM0.s
       Source file:   Device/ARM/ARMCM0/Source/system_ARMCM0.c
       Include file:  Device/ARM/ARMCM0/Include/ARMCM0.h
-      Source file:   Device/ARM/ARMCM0/Source/ARM/startup_ARMCM0.s
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
