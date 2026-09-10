@@ -2,6 +2,7 @@
 	<view class="content">
 		
 		<view class="connect2">
+			
 			<view class="text-area">
 				<!-- <text class="title">{{title}}</text> -->
 				

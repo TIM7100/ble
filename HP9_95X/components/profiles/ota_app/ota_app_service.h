@@ -47,7 +47,7 @@
 
 
 
-/****************************** À¶ÑÀ»Ø¸´APPÊý¾Ý¸ñÊ½ -- Start ********************************/
+/****************************** ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½APPï¿½ï¿½ï¿½Ý¸ï¿½Ê½ -- Start ********************************/
 #define RP_HP9_BURN_FILE_UPDATA	                 "Updata"
 #define RP_HP9_BURN_FILE_UPDATA_LEN                 6
 #define RP_HP9_BURN_FILE_NEWEST                  "Newest"
@@ -58,50 +58,53 @@
 
 #define RP_HP9_BURN_FILE_SAVE_SUCCESS 		    "Download_OK"
 #define RP_HP9_BURN_FILE_SAVE_SUCCESS_LEN           11
-//ÉÕÂ¼Éý¼¶Ð¾Æ¬¹ý³ÌºÍ½á¹û -- ÉÏ±¨
-#define RP_BURN_CHIP_PROGRESS		"Progress:%03d"							//Ð¾Æ¬Éý¼¶½ø¶ÈÉÏ±¨			
+//ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ð¾Æ¬ï¿½ï¿½ï¿½ÌºÍ½ï¿½ï¿½ -- ï¿½Ï±ï¿½
+#define RP_BURN_CHIP_PROGRESS		"Progress:%03d"							//Ð¾Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½			
 #define RP_BURN_CHIP_PROGRESS_LEN         12
-#define RP_BURN_CHIP_RESULT	        "Code:%d"								//Ð¾Æ¬Éý¼¶½á¹ûÉÏ±¨	
+#define RP_BURN_CHIP_RESULT	        "Code:%d"								//Ð¾Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½	
 #define RP_BURN_CHIP_RESULT_LEN         6
 
-/****************************** À¶ÑÀ»Ø¸´APPÊý¾Ý¸ñÊ½ -- End ********************************/
+/****************************** ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½APPï¿½ï¿½ï¿½Ý¸ï¿½Ê½ -- End ********************************/
 
 
-/****************************** À¶ÑÀµ¥´Î´«ÊäÊ±µÄÊý¾Ý´óÐ¡ -- START ********************************/
-#define ONCE_DOWNLOAD_SIZE    128				//µ¥´ÎÏÂÔØµÄÎÄ¼þµÄ´óÐ¡
+/****************************** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½Ð¡ -- START ********************************/
+#define ONCE_DOWNLOAD_SIZE    128				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½Ä¼ï¿½ï¿½Ä´ï¿½Ð¡
 
-/****************************** APPÏÂ·¢Êý¾ÝÃüÁîÂë ********************************/
+/****************************** APPï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ********************************/
 enum 
 {
 	OTA_APP_CMD_VERSION = '1',
 	OTA_APP_CMD_UPDATA = '2',
-	OTA_APP_CMD_START_DOWN = '3'
+	OTA_APP_CMD_START_DOWN = '3',
+	OTA_APP_CMD_OTA_VERSION = '4',		//å¯¹æ¯”OTAå›ºä»¶æœ¬åœ°ç‰ˆæœ¬
+	OTA_APP_CMD_OTA_SAVE_VERSION = '5',	//OTAæˆåŠŸåŽå›žå†™æœ¬åœ°ç‰ˆæœ¬
+	OTA_APP_CMD_OTA_GET_VERSION = '6'	//è¿”å›žæœ¬åœ°OTAå›ºä»¶ç‰ˆæœ¬(10å­—èŠ‚)
 };
 
 
-/****************************** À¶ÑÀ½ÓÊÕAPPÊý¾ÝµÄÊý¾Ý¸ñÊ½ -- START ********************************/
+/****************************** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½APPï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½Ý¸ï¿½Ê½ -- START ********************************/
 #pragma pack(1)
 typedef struct
 {
-	uint16_t len;								//±¾´Î½ÓÊÕÊý¾ÝµÄ³¤¶È
-	uint8 cmd;									//ÃüÁîÂë	
+	uint16_t len;								//ï¿½ï¿½ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½
+	uint8 cmd;									//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	
 	union
 	{
 		struct
 		{
-			uint8 num[2];						//·Ö¶ÎÎÄ¼þµÄ¶ÎºÅ
-			uint8 buff[ONCE_DOWNLOAD_SIZE];		//ÎÄ¼þµÄÊý¾Ý
+			uint8 num[2];						//ï¿½Ö¶ï¿½ï¿½Ä¼ï¿½ï¿½Ä¶Îºï¿½
+			uint8 buff[ONCE_DOWNLOAD_SIZE];		//ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		} file_data;								
 		
 		struct
 		{
 			char version[10];
 			datetime_t current_time;
-		}file_version;								//´«ÊäµÄÎÄ¼þµÄ°æ±¾ºÍ´«ÊäµÄÊ±¼ä, ÔÚÃüÁîÂëÎª OTA_APP_CMD_VERSION Ê±´«Êä 
+		}file_version;								//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ä°æ±¾ï¿½Í´ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª OTA_APP_CMD_VERSION Ê±ï¿½ï¿½ï¿½ï¿½ 
 		
         struct
         {
-            uint16 size;					//±¾´Î´«ÊäµÄÎÄ¼þ·Ö¶ÎµÄÊýÁ¿, ÔÚÃüÁîÂëÎª OTA_APP_CMD_UPDATA Ê±´«Êä 
+            uint16 size;					//ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ö¶Îµï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª OTA_APP_CMD_UPDATA Ê±ï¿½ï¿½ï¿½ï¿½ 
             uint8 k_count;
             uint8 c_count;
             uint8 m_count;
@@ -111,9 +114,9 @@ typedef struct
 //	uint8 buff[ONCE_DOWNLOAD_COUNT];
 }ble_updata_info_t;
 #pragma pack()
-/****************************** À¶ÑÀ½ÓÊÕAPPÊý¾ÝµÄÊý¾Ý¸ñÊ½ -- END ********************************/
+/****************************** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½APPï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½Ý¸ï¿½Ê½ -- END ********************************/
 
-typedef uint8 (*ble_updata_change_CB_t)(uint8 result);						//ÏÂÔØÎÄ¼þ½á¹û»Øµ÷º¯Êý
+typedef uint8 (*ble_updata_change_CB_t)(uint8 result);						//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 
 bStatus_t ota_app_AddService(ble_updata_change_CB_t app_CB);
 

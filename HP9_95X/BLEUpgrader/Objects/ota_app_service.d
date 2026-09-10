@@ -47,4 +47,5 @@
 .\objects\ota_app_service.o: ..\components\ble\controller\ll_buf.h
 .\objects\ota_app_service.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\ota_app_service.o: .\source\file_handle.h
+.\objects\ota_app_service.o: ..\components\OTAEVENT\OTAfile_handle.h
 .\objects\ota_app_service.o: ..\components\driver\flash\flash.h

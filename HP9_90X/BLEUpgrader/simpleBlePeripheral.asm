@@ -35,8 +35,8 @@
     Program header entries: 3
     Section header entries: 19
 
-    Program header offset: 701400 (0x000ab3d8)
-    Section header offset: 701496 (0x000ab438)
+    Program header offset: 701404 (0x000ab3dc)
+    Section header offset: 701500 (0x000ab43c)
 
     Section header string table index: 18
 
@@ -26723,7 +26723,7 @@
         0x11027370:    a905        ..      ADD      r1,sp,#0x14
         0x11027372:    0080        ..      LSLS     r0,r0,#2
         0x11027374:    f7f9fd4e    ..N.    BL       GAPRole_GetParameter ; 0x11020e14
-        0x11027378:    482f        /H      LDR      r0,[pc,#188] ; [0x11027438] = 0x1100f000
+        0x11027378:    482f        /H      LDR      r0,[pc,#188] ; [0x11027438] = 0x11043000
         0x1102737a:    f7fbff71    ..q.    BL       bdAddr2Str ; 0x11023260
         0x1102737e:    4601        .F      MOV      r1,r0
         0x11027380:    220e        ."      MOVS     r2,#0xe
@@ -26797,7 +26797,7 @@
         0x1102742c:    54535f45    E_ST    DCD    1414750021
         0x11027430:    45545241    ARTE    DCD    1163153985
         0x11027434:    00000044    D...    DCD    68
-        0x11027438:    1100f000    ....    DCD    285274112
+        0x11027438:    11043000    .0..    DCD    285487104
         0x1102743c:    00000305    ....    DCD    773
         0x11027440:    52415453    STAR    DCD    1380013139
         0x11027444:    41472054    T GA    DCD    1095180372
@@ -32794,7 +32794,7 @@
     Flags       : None (0x00000000)
     Addr        : 0x00000000
     File Offset : 581900 (0x8e10c)
-    Size        : 119320 bytes (0x1d218)
+    Size        : 119324 bytes (0x1d21c)
     Link        : SHN_UNDEF
     Info        : 0
     Alignment   : 1
@@ -33267,7 +33267,7 @@
 
     Input Comments:
     
-    p329c-3
+    pc0c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33275,6 +33275,7 @@
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: ArmCC [4d365d]
     ArmCC --c99 --split_sections --debug -c -o.\objects\simplebleperipheral.o --depend=.\objects\simplebleperipheral.d --cpu=Cortex-M0 --apcs=interwork -O3 --diag_suppress=9931 -I..\components\inc -I..\components\ble\controller -I..\components\osal\include -I..\components\ble\include -I..\components\ble\hci -I..\components\ble\host -I..\components\profiles\ota_app -I..\components\profiles\DevInfo -I..\components\profiles\SimpleProfile -I..\components\profiles\Roles -I.\source -I..\components\libraries\crc16 -I..\components\driver\watchdog -I..\components\driver\clock -I..\components\driver\pwrmgr -I..\components\driver\uart -I..\components\driver\gpio -I..\components\driver\timer -I..\components\driver\log -I..\components\driver\pwm -I..\components\driver\flash -I..\components\driver\led_light -I..\components\libraries\fs -I..\components\arch\cm0 -I..\misc -I..\components\libraries\datetime -I..\components\driver\key -I..\components\driver\my_i2c -I..\components\OTAEVENT -I.\RTE\_Target_1 -ID:\keil5data\ARM\CMSIS\5.9.0\CMSIS\Core\Include -ID:\keil5data\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0\Include -D__MICROLIB -DADV_NCONN_CFG=0x01 -DADV_CONN_CFG=0x02 -DSCAN_CFG=0x04 -DINIT_CFG=0x08 -DBROADCASTER_CFG=0x01 -DOBSERVER_CFG=0x02 -DPERIPHERAL_CFG=0x04 -DCENTRAL_CFG=0x08 -D__UVISION_VERSION=538 -D_RTE_ -DARMCM0 -D_RTE_ -DCFG_CP -DOSAL_CBTIMER_NUM_TASKS=1 -DMTU_SIZE=247 -DHOST_CONFIG=4 -DHCI_TL_NONE=1 -DENABLE_LOG_ROM_=0 -D_BUILD_FOR_DTM_=0 -DDEBUG_INFO=1 -DDBG_ROM_MAIN=0 -DAPP_CFG=0 -DOSALMEM_METRICS=0 -DPHY_MCU_TYPE=MCU_BUMBEE_M0 -DCFG_SLEEP_MODE=PWR_MODE_NO_SLEEP -DDEF_GAPBOND_MGR_ENABLE=0 -DUSE_FS=0 -DMAX_NUM_LL_CONN=1 --omf_browse=.\objects\simplebleperipheral.crf source\simpleBLEPeripheral.c
+    
     
     
     
@@ -33328,7 +33329,7 @@
 
     Input Comments:
     
-    p376c-3
+    p2198-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33410,7 +33411,7 @@
 
     Input Comments:
     
-    pdfc-3
+    p240c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33418,6 +33419,9 @@
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: ArmCC [4d365d]
     ArmCC --c99 --split_sections --debug -c -o.\objects\otafile_handle.o --depend=.\objects\otafile_handle.d --cpu=Cortex-M0 --apcs=interwork -O3 --diag_suppress=9931 -I..\components\inc -I..\components\ble\controller -I..\components\osal\include -I..\components\ble\include -I..\components\ble\hci -I..\components\ble\host -I..\components\profiles\ota_app -I..\components\profiles\DevInfo -I..\components\profiles\SimpleProfile -I..\components\profiles\Roles -I.\source -I..\components\libraries\crc16 -I..\components\driver\watchdog -I..\components\driver\clock -I..\components\driver\pwrmgr -I..\components\driver\uart -I..\components\driver\gpio -I..\components\driver\timer -I..\components\driver\log -I..\components\driver\pwm -I..\components\driver\flash -I..\components\driver\led_light -I..\components\libraries\fs -I..\components\arch\cm0 -I..\misc -I..\components\libraries\datetime -I..\components\driver\key -I..\components\driver\my_i2c -I..\components\OTAEVENT -I.\RTE\_Target_1 -ID:\keil5data\ARM\CMSIS\5.9.0\CMSIS\Core\Include -ID:\keil5data\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0\Include -D__MICROLIB -DADV_NCONN_CFG=0x01 -DADV_CONN_CFG=0x02 -DSCAN_CFG=0x04 -DINIT_CFG=0x08 -DBROADCASTER_CFG=0x01 -DOBSERVER_CFG=0x02 -DPERIPHERAL_CFG=0x04 -DCENTRAL_CFG=0x08 -D__UVISION_VERSION=538 -D_RTE_ -DARMCM0 -D_RTE_ -DCFG_CP -DOSAL_CBTIMER_NUM_TASKS=1 -DMTU_SIZE=247 -DHOST_CONFIG=4 -DHCI_TL_NONE=1 -DENABLE_LOG_ROM_=0 -D_BUILD_FOR_DTM_=0 -DDEBUG_INFO=1 -DDBG_ROM_MAIN=0 -DAPP_CFG=0 -DOSALMEM_METRICS=0 -DPHY_MCU_TYPE=MCU_BUMBEE_M0 -DCFG_SLEEP_MODE=PWR_MODE_NO_SLEEP -DDEF_GAPBOND_MGR_ENABLE=0 -DUSE_FS=0 -DMAX_NUM_LL_CONN=1 --omf_browse=.\objects\otafile_handle.crf ..\components\OTAEVENT\OTAfile_handle.c
+    
+    
+    
     
     
     startup_armcm0.o
@@ -34024,7 +34028,7 @@
     Type        : SHT_STRTAB (0x00000003)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 701220 (0xab324)
+    File Offset : 701224 (0xab328)
     Size        : 180 bytes (0xb4)
     Link        : SHN_UNDEF
     Info        : 0

@@ -47,15 +47,6 @@
 				</view>
 				
 				<!-- 升级模式选择 -->
-				<view v-if="!pg_flag && !rx_notify" class="mode-select">
-					<button type="primary" class="mode-btn" @click="startUpgrade(false)">
-						{{$t('index.hp9DataUpgrade')}}
-					</button>
-					<button type="primary" class="mode-btn" @click="startUpgrade(true)">
-						{{$t('index.fwOTAUpgrade')}}
-					</button>
-				</view>
-				
 				<button type="warn" class="backbutton" @click="Disconnect">
 					{{$t('BLE.disconnect')}}<!-- 断开蓝牙连接 -->
 				</button>
@@ -170,6 +161,8 @@
 				connectedcharacteristicId: [],
 				// 固件OTA模式标志
 			fw_ota_mode: false,
+			// 自动升级链路标志：固件OTA已最新时自动接续HP9数据升级
+			auto_chain: false,
 			// 固件OTA升级等待重连标志（设备重启进入OTA模式后重新连接）
 			waiting_ota_reconnect: false,
 			// OTA重连中标志（阻止Disconnect清空设备信息）
@@ -401,14 +394,15 @@
 		
 		
 		methods: {
-				// 选择升级模式并开始升级
-				startUpgrade(isFirmware) {
-					this.fw_ota_mode = isFirmware;
+				// 自动升级链路：连接成功后自动先固件OTA、再HP9数据升级
+				autoCheckAndUpgrade() {
+					this.auto_chain = true;
+					this.fw_ota_mode = true;   // 先固件OTA
 					this.where();
 				},
 				
 				//查询云数据库
-			where(){
+				where(){
 					const db = uniCloud.database();
 					var that = this;
 					
@@ -456,6 +450,13 @@
 									const verRes = await that.compareOtaVersion(that.fw_ota_version);
 									if (verRes === 'Newest') {
 										uni.hideToast();
+										// 自动链路：固件已最新则接续HP9数据升级
+										if (that.auto_chain) {
+											console.log('固件已是最新，自动接续HP9数据升级');
+											that.fw_ota_mode = false;
+											that.where();
+											return;
+										}
 										that.toast('已是最新版本，无需升级');
 										that.fw_ota_mode = false;
 										that.lockInterface = false;
@@ -575,6 +576,8 @@
 					db.collection('ble').where({
 						name : new RegExp('^' + that.chip_name)		//获取数据库中name为chip_name开头的数据包
 					}).get().then( async(res) => {
+						// 已进入HP9数据升级流程，自动链路到此为止
+						that.auto_chain = false;
 						that.server_version = res.result.data[0].version;
 						uni.getStorage({		//读取缓存
 						key: that.chip_name,
@@ -1058,10 +1061,13 @@
 						},300)
 						this.maskShow = false;
 						
-						// 特征值与notify就绪后读取固件版本(本地+云端)
+						// 特征值与notify就绪后读取固件版本(本地+云端)，并启动自动升级链路
 						setTimeout(() => {
 							this.getFwVersions();
 						}, 800);
+						setTimeout(() => {
+							this.autoCheckAndUpgrade();
+						}, 1200);
 					},
 					fail: e => {
 						console.log('获取特征值失败，错误码：' + e.code);
@@ -1583,7 +1589,7 @@
 						console.log(this.valueChangeData.value);
 						this.lockInterface = false; // 关闭遮盖层
 						
-						that.toast(that.$t('BLE.new_version') + '\n' + this.updata_version_before); //"已是最新版本"
+						that.toast(that.$t('BLE.new_version') + '\n'); //"已是最新版本"
 						
 						return;
 					}
@@ -1689,7 +1695,7 @@
 														
 														uni.hideToast();
 														this.lockInterface = false; // 关闭遮盖层
-														that.toast(this.$t('BLE.new_version') + '\n' + this.updata_version_before); //"已是最新版本"
+														that.toast(this.$t('BLE.new_version') + '\n'); //"已是最新版本"
 													}
 												});
 											
@@ -1709,7 +1715,7 @@
 											this.lockInterface = false; // 关闭遮盖层
 											
 											// toast("已是最新版本" + this.updata_version_before);
-											that.toast(this.$t('BLE.new_version') + '\n' + this.updata_version_before); //"已是最新版本"
+											that.toast(this.$t('BLE.new_version') + '\n'); //"已是最新版本"
 										
 										}
 										
@@ -2393,7 +2399,12 @@
 						this.fw_ota_mode = false;
 						this.ota_reconnecting = false;
 						this.lockInterface = false;
-						that.toast('固件升级完成，设备重启中...');
+						// 自动链路下OTA完成后提示手动重连
+						if (this.auto_chain) {
+							that.toast('固件升级完成，等待蓝牙断开后重新连接');
+						} else {
+							that.toast('固件升级完成，设备重启中...');
+						}
 						
 					} catch(err) {
 						console.error('固件OTA失败:', err);
@@ -3020,7 +3031,7 @@
 		background-image: linear-gradient(to bottom, #9bdeff 0%, #cdf0ff 40%, #ffffff 70%); 
 	}
 
-	/* 升级模式选择：两个按钮水平排布并留间距 */
+	/* 升级模式选择：两个按钮水平排布并留间距 ,  已弃用*/ 
 .mode-select{
 	display: flex;
 	align-items: center;

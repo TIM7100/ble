@@ -275,7 +275,7 @@ body{
 		background-image: linear-gradient(to bottom, #9bdeff 0%, #cdf0ff 40%, #ffffff 70%);
 }
 
-	/* 升级模式选择：两个按钮水平排布并留间距 */
+	/* 升级模式选择：两个按钮水平排布并留间距 ,  已弃用*/
 .mode-select{
 	display: flex;
 	align-items: center;
