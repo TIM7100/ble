@@ -24,6 +24,12 @@
   "schema.add-success": "Add success",
   
   "index.app_version":"Version",
+  "index.latest_version":"Latest Version",
+  "index.app_update_title":"New version available",
+  "index.app_update_confirm":"A new version is detected. Update now?",
+  "index.app_already_latest":"You are on the latest version",
+  "index.app_no_version":"No app update package found on cloud",
+  "index.app_downloading":"Downloading new version...",
   "index.settings":"Settings",
   "BLE.connect":"Connect Bluetooth devices",
   "BLE.disconnect":"Disconnect Bluetooth",
@@ -48,7 +54,7 @@
   "BLE.new_version":"It is the latest version",
   "BLE.updating_version":"Updating new version",
   "BLE.lost_data":"Data loss, please resend!",
-  s
+
   "Download.fail":"Data download failed, please download again:",
   
   "initTypes.10000":"Not init",

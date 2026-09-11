@@ -4710,7 +4710,7 @@ ${i3}
           this.ota_reconnecting = false;
           this.lockInterface = false;
           if (this.auto_chain) {
-            that2.toast("固件升级完成，等待蓝牙断开后重新连接");
+            that2.toast("固件升级完成，请等待蓝牙断开后重新连接");
           } else {
             that2.toast("固件升级完成，设备重启中...");
           }
@@ -5144,6 +5144,7 @@ ${i3}
       return {
         title: "Hello",
         version_number: "",
+        isAndroid: false,
         systemLocale: "",
         applicationLocale: ""
       };
@@ -5151,7 +5152,7 @@ ${i3}
     onLoad() {
       const systemInfo = uni.getSystemInfoSync();
       this.version_number = systemInfo.appWgtVersion;
-      formatAppLog("log", "at pages/setup/setup.vue:58", this.version_number);
+      formatAppLog("log", "at pages/setup/setup.vue:62", this.version_number);
       this.systemLocale = systemInfo.language;
       this.applicationLocale = uni.getLocale();
       this.isAndroid = systemInfo.platform.toLowerCase() === "android";
@@ -5188,6 +5189,99 @@ ${i3}
           uni.setLocale(e2.code);
           this.$i18n.locale = e2.code;
         }
+      },
+      toast(msg) {
+        uni.showToast({ title: msg, icon: "none", duration: 2e3 });
+      },
+      // 对比云端APP版本并升级
+      checkForAppUpdate() {
+        var that2 = this;
+        uni.showToast({
+          title: this.$t("index.check_new_version"),
+          icon: "none",
+          duration: 99999
+        });
+        const db = _r.database();
+        db.collection("APK").where({ name: "HP9APK" }).get().then((res) => {
+          uni.hideToast();
+          if (!res.result || !res.result.data || res.result.data.length === 0) {
+            that2.toast(that2.$t("index.app_no_version"));
+            return;
+          }
+          const raw = res.result.data[0].version;
+          const cloudNum = Number(raw);
+          const cloudStr = String(raw == null ? "" : raw).trim();
+          const localDisplay = String(that2.version_number || "").trim();
+          formatAppLog("log", "at pages/setup/setup.vue:136", "云端APP版本:", cloudNum, cloudStr, "本地显示版本:", localDisplay);
+          const isLatest = cloudStr !== "" && cloudStr === localDisplay;
+          if (isLatest) {
+            that2.toast(that2.$t("index.app_already_latest"));
+            return;
+          }
+          const url = res.result.data[0].URL;
+          uni.showModal({
+            title: that2.$t("index.app_update_title"),
+            content: that2.$t("index.app_update_confirm"),
+            success: (modal) => {
+              if (modal.confirm) {
+                that2.downloadAndInstallApk(url);
+              }
+            }
+          });
+        }).catch((err) => {
+          uni.hideToast();
+          formatAppLog("error", "at pages/setup/setup.vue:155", "APK查询失败:", err);
+          that2.toast(that2.$t("index.download_failed"));
+        });
+      },
+      // 下载APK包（plus.downloader，index.vue已验证；下载后直接安装）
+      downloadAndInstallApk(url) {
+        var that2 = this;
+        uni.showLoading({ title: that2.$t("index.app_downloading"), mask: true });
+        try {
+          const dtask = plus.downloader.createDownload(url, {}, function(d2, status) {
+            if (status === 200) {
+              try {
+                const apkPath = plus.io.convertLocalFileSystemURL(d2.filename);
+                uni.hideLoading();
+                formatAppLog("log", "at pages/setup/setup.vue:171", "APK已就绪:", apkPath);
+                that2.installApk(apkPath);
+              } catch (e2) {
+                uni.hideLoading();
+                formatAppLog("error", "at pages/setup/setup.vue:175", "解析APK路径失败:", e2);
+                that2.toast("APK路径解析失败");
+              }
+            } else {
+              uni.hideLoading();
+              formatAppLog("error", "at pages/setup/setup.vue:180", "APK下载失败, status=", status);
+              that2.toast(that2.$t("index.download_failed") + "[" + status + "]");
+            }
+          });
+          try {
+            dtask.addEventListener("downloadprogress", function(e2) {
+              const total = Number(e2 && e2.totalSize) || 0;
+              const cur = Number(e2 && e2.downloadSize) || 0;
+              const pct = total > 0 ? Math.round(cur / total * 100) : 0;
+              uni.showLoading({ title: that2.$t("index.app_downloading") + " " + pct + "%", mask: true });
+            });
+          } catch (e2) {
+          }
+          dtask.start();
+        } catch (e2) {
+          uni.hideLoading();
+          formatAppLog("error", "at pages/setup/setup.vue:196", "创建下载任务失败:", e2);
+          that2.toast(that2.$t("index.download_failed"));
+        }
+      },
+      // 请求权限并调用系统安装界面
+      installApk(apkPath) {
+        var that2 = this;
+        plus.runtime.install(apkPath, { force: true }, function() {
+          formatAppLog("log", "at pages/setup/setup.vue:207", "APK安装成功");
+        }, function(e2) {
+          formatAppLog("error", "at pages/setup/setup.vue:209", "安装失败:", e2);
+          that2.toast("安装失败：" + (e2 && e2.message ? e2.message : e2.code));
+        });
       }
     }
   };
@@ -5241,6 +5335,17 @@ ${i3}
             "view",
             { class: "uni-list-box" },
             vue.toDisplayString(_ctx.$t("index.app_version")) + " V" + vue.toDisplayString($data.version_number),
+            1
+            /* TEXT */
+          ),
+          vue.createElementVNode(
+            "view",
+            {
+              class: "uni-list-box",
+              style: { "color": "#007aff" },
+              onClick: _cache[1] || (_cache[1] = (...args) => $options.checkForAppUpdate && $options.checkForAppUpdate(...args))
+            },
+            vue.toDisplayString(_ctx.$t("index.latest_version")),
             1
             /* TEXT */
           )
@@ -6344,6 +6449,12 @@ ${i3}
     "schema.add": "Add",
     "schema.add-success": "Add success",
     "index.app_version": "Version",
+    "index.latest_version": "Latest Version",
+    "index.app_update_title": "New version available",
+    "index.app_update_confirm": "A new version is detected. Update now?",
+    "index.app_already_latest": "You are on the latest version",
+    "index.app_no_version": "No app update package found on cloud",
+    "index.app_downloading": "Downloading new version...",
     "index.settings": "Settings",
     "BLE.connect": "Connect Bluetooth devices",
     "BLE.disconnect": "Disconnect Bluetooth",
@@ -6418,6 +6529,12 @@ ${i3}
     "schema.add": "新增",
     "schema.add-success": "新增成功",
     "index.app_version": "版本",
+    "index.latest_version": "最新版本",
+    "index.app_update_title": "发现新版本",
+    "index.app_update_confirm": "检测到APP有更新，是否立即更新？",
+    "index.app_already_latest": "当前已是最新版本",
+    "index.app_no_version": "云端未找到APP更新包",
+    "index.app_downloading": "正在下载新版本APP...",
     "index.settings": "设置",
     "BLE.connect": "搜索蓝牙设备",
     "BLE.mode": "升级模式",

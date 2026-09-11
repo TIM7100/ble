@@ -2401,7 +2401,7 @@
 						this.lockInterface = false;
 						// 自动链路下OTA完成后提示手动重连
 						if (this.auto_chain) {
-							that.toast('固件升级完成，等待蓝牙断开后重新连接');
+							that.toast('固件升级完成，请等待蓝牙断开后重新连接');
 						} else {
 							that.toast('固件升级完成，设备重启中...');
 						}
