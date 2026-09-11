@@ -38,6 +38,8 @@
 </template>
 
 <script>
+	// 直接读取 manifest.json 的 versionCode/versionName（uni-app 支持导入）
+	import manifestJson from '../../manifest.json'
 	export default {
 		data() {
 				return {
@@ -131,11 +133,13 @@
 			    const cloudNum = Number(raw);
 			    const cloudStr = String(raw == null ? '' : raw).trim();
 
-			    // 本地版本：以页面显示的版本号(manifest versionName, 如1.0.1)为准做字符串对比
-			    const localDisplay = String(that.version_number || '').trim();   // 即 appWgtVersion
-			    console.log('云端APP版本:', cloudNum, cloudStr, '本地显示版本:', localDisplay);
-			    // 已最新：云端版本字符串 等于 本地manifest版本号
-			    const isLatest = (cloudStr !== '' && cloudStr === localDisplay);
+			    // 本地版本：以 manifest.json 的 versionCode/versionName 为准
+			    const localCode = (manifestJson && Number(manifestJson.versionCode)) || 0;   // = 2
+			    const localName = String((manifestJson && manifestJson.versionName) || that.version_number || '').trim(); // = "1.0.1"
+			    console.log('云端APP版本:', cloudNum, cloudStr, '本地code:', localCode, '本地name:', localName);
+			    // 已最新：云端数字==本地versionCode，或 云端字符串==本地versionName
+			    const isLatest = (cloudNum !== 0 && cloudNum === localCode)
+			                  || (cloudStr !== '' && cloudStr === localName);
 			    if (isLatest) {
 			      that.toast(that.$t('index.app_already_latest'));
 			      return;

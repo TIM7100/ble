@@ -4247,7 +4247,7 @@ ${i3}
                 var reader = new plus.io.FileReader();
                 reader.readAsDataURL(file);
                 reader.onloadend = function(e2) {
-                  (function(path, name) {
+                  (function(path, name2) {
                     var arr = path.split(",");
                     arr[0].match(/:(.*?);/)[1];
                     var bstr = atob(arr[1]), n2 = bstr.length, u8arr = new Uint8Array(n2);
@@ -5139,6 +5139,129 @@ ${i3}
     ]);
   }
   const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "E:/ble/SLB/test3/pages/index/index.vue"]]);
+  const name = "HP9蓝牙升级仪";
+  const appid = "__UNI__F83CD93";
+  const description = "BLE升级仪初代测试";
+  const versionName = "1.0.0";
+  const versionCode = 1;
+  const transformPx = false;
+  const quickapp = {};
+  const uniStatistics = {
+    enable: false
+  };
+  const vueVersion = "3";
+  const fallbackLocale = "zh-Hans";
+  const manifestJson = {
+    name,
+    appid,
+    description,
+    versionName,
+    versionCode,
+    transformPx,
+    "app-plus": {
+      usingComponents: true,
+      nvueStyleCompiler: "uni-app",
+      compilerVersion: 3,
+      splashscreen: {
+        alwaysShowBeforeRender: true,
+        waiting: true,
+        autoclose: true,
+        delay: 0
+      },
+      modules: {
+        Bluetooth: {}
+      },
+      distribute: {
+        android: {
+          permissions: [
+            '<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>',
+            '<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>',
+            '<uses-permission android:name="android.permission.READ_LOGS"/>',
+            '<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>',
+            '<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>',
+            '<uses-permission android:name="android.permission.GET_ACCOUNTS"/>',
+            '<uses-permission android:name="android.permission.READ_PHONE_STATE"/>',
+            '<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>',
+            '<uses-permission android:name="android.permission.WAKE_LOCK"/>',
+            '<uses-permission android:name="android.permission.FLASHLIGHT"/>',
+            '<uses-permission android:name="android.permission.WRITE_SETTINGS"/>',
+            '<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>',
+            '<uses-permission android:name="android.permission.INTERNET" />',
+            '<uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />',
+            '<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />',
+            '<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />'
+          ],
+          minSdkVersion: 22,
+          abiFilters: [
+            "arm64-v8a"
+          ]
+        },
+        ios: {
+          dSYMs: false
+        },
+        sdkConfigs: {
+          ad: {}
+        },
+        icons: {
+          android: {
+            hdpi: "unpackage/res/icons/72x72.png",
+            xhdpi: "unpackage/res/icons/96x96.png",
+            xxhdpi: "unpackage/res/icons/144x144.png",
+            xxxhdpi: "unpackage/res/icons/192x192.png"
+          },
+          ios: {
+            appstore: "unpackage/res/icons/1024x1024.png",
+            ipad: {
+              app: "unpackage/res/icons/76x76.png",
+              "app@2x": "unpackage/res/icons/152x152.png",
+              notification: "unpackage/res/icons/20x20.png",
+              "notification@2x": "unpackage/res/icons/40x40.png",
+              "proapp@2x": "unpackage/res/icons/167x167.png",
+              settings: "unpackage/res/icons/29x29.png",
+              "settings@2x": "unpackage/res/icons/58x58.png",
+              spotlight: "unpackage/res/icons/40x40.png",
+              "spotlight@2x": "unpackage/res/icons/80x80.png"
+            },
+            iphone: {
+              "app@2x": "unpackage/res/icons/120x120.png",
+              "app@3x": "unpackage/res/icons/180x180.png",
+              "notification@2x": "unpackage/res/icons/40x40.png",
+              "notification@3x": "unpackage/res/icons/60x60.png",
+              "settings@2x": "unpackage/res/icons/58x58.png",
+              "settings@3x": "unpackage/res/icons/87x87.png",
+              "spotlight@2x": "unpackage/res/icons/80x80.png",
+              "spotlight@3x": "unpackage/res/icons/120x120.png"
+            }
+          }
+        },
+        splashscreen: {
+          useOriginalMsgbox: true
+        }
+      },
+      nativePlugins: {}
+    },
+    quickapp,
+    "mp-weixin": {
+      appid: "wxe1137531d2db07da",
+      setting: {
+        urlCheck: false
+      },
+      usingComponents: true,
+      permission: {}
+    },
+    "mp-alipay": {
+      usingComponents: true
+    },
+    "mp-baidu": {
+      usingComponents: true
+    },
+    "mp-toutiao": {
+      usingComponents: true
+    },
+    uniStatistics,
+    vueVersion,
+    fallbackLocale
+  };
   const _sfc_main$1 = {
     data() {
       return {
@@ -5152,7 +5275,7 @@ ${i3}
     onLoad() {
       const systemInfo = uni.getSystemInfoSync();
       this.version_number = systemInfo.appWgtVersion;
-      formatAppLog("log", "at pages/setup/setup.vue:62", this.version_number);
+      formatAppLog("log", "at pages/setup/setup.vue:64", this.version_number);
       this.systemLocale = systemInfo.language;
       this.applicationLocale = uni.getLocale();
       this.isAndroid = systemInfo.platform.toLowerCase() === "android";
@@ -5211,9 +5334,10 @@ ${i3}
           const raw = res.result.data[0].version;
           const cloudNum = Number(raw);
           const cloudStr = String(raw == null ? "" : raw).trim();
-          const localDisplay = String(that2.version_number || "").trim();
-          formatAppLog("log", "at pages/setup/setup.vue:136", "云端APP版本:", cloudNum, cloudStr, "本地显示版本:", localDisplay);
-          const isLatest = cloudStr !== "" && cloudStr === localDisplay;
+          const localCode = manifestJson && Number(manifestJson.versionCode) || 0;
+          const localName = String(manifestJson && manifestJson.versionName || that2.version_number || "").trim();
+          formatAppLog("log", "at pages/setup/setup.vue:139", "云端APP版本:", cloudNum, cloudStr, "本地code:", localCode, "本地name:", localName);
+          const isLatest = cloudNum !== 0 && cloudNum === localCode || cloudStr !== "" && cloudStr === localName;
           if (isLatest) {
             that2.toast(that2.$t("index.app_already_latest"));
             return;
@@ -5230,7 +5354,7 @@ ${i3}
           });
         }).catch((err) => {
           uni.hideToast();
-          formatAppLog("error", "at pages/setup/setup.vue:155", "APK查询失败:", err);
+          formatAppLog("error", "at pages/setup/setup.vue:159", "APK查询失败:", err);
           that2.toast(that2.$t("index.download_failed"));
         });
       },
@@ -5244,16 +5368,16 @@ ${i3}
               try {
                 const apkPath = plus.io.convertLocalFileSystemURL(d2.filename);
                 uni.hideLoading();
-                formatAppLog("log", "at pages/setup/setup.vue:171", "APK已就绪:", apkPath);
+                formatAppLog("log", "at pages/setup/setup.vue:175", "APK已就绪:", apkPath);
                 that2.installApk(apkPath);
               } catch (e2) {
                 uni.hideLoading();
-                formatAppLog("error", "at pages/setup/setup.vue:175", "解析APK路径失败:", e2);
+                formatAppLog("error", "at pages/setup/setup.vue:179", "解析APK路径失败:", e2);
                 that2.toast("APK路径解析失败");
               }
             } else {
               uni.hideLoading();
-              formatAppLog("error", "at pages/setup/setup.vue:180", "APK下载失败, status=", status);
+              formatAppLog("error", "at pages/setup/setup.vue:184", "APK下载失败, status=", status);
               that2.toast(that2.$t("index.download_failed") + "[" + status + "]");
             }
           });
@@ -5269,7 +5393,7 @@ ${i3}
           dtask.start();
         } catch (e2) {
           uni.hideLoading();
-          formatAppLog("error", "at pages/setup/setup.vue:196", "创建下载任务失败:", e2);
+          formatAppLog("error", "at pages/setup/setup.vue:200", "创建下载任务失败:", e2);
           that2.toast(that2.$t("index.download_failed"));
         }
       },
@@ -5277,9 +5401,9 @@ ${i3}
       installApk(apkPath) {
         var that2 = this;
         plus.runtime.install(apkPath, { force: true }, function() {
-          formatAppLog("log", "at pages/setup/setup.vue:207", "APK安装成功");
+          formatAppLog("log", "at pages/setup/setup.vue:211", "APK安装成功");
         }, function(e2) {
-          formatAppLog("error", "at pages/setup/setup.vue:209", "安装失败:", e2);
+          formatAppLog("error", "at pages/setup/setup.vue:213", "安装失败:", e2);
           that2.toast("安装失败：" + (e2 && e2.message ? e2.message : e2.code));
         });
       }
@@ -6529,7 +6653,7 @@ ${i3}
     "schema.add": "新增",
     "schema.add-success": "新增成功",
     "index.app_version": "版本",
-    "index.latest_version": "最新版本",
+    "index.latest_version": "检查更新",
     "index.app_update_title": "发现新版本",
     "index.app_update_confirm": "检测到APP有更新，是否立即更新？",
     "index.app_already_latest": "当前已是最新版本",
@@ -6606,8 +6730,8 @@ ${i3}
     const perf = inBrowser && window.performance;
     if (perf && perf.mark && perf.measure && perf.clearMarks && perf.clearMeasures) {
       mark = (tag) => perf.mark(tag);
-      measure = (name, startTag, endTag) => {
-        perf.measure(name, startTag, endTag);
+      measure = (name2, startTag, endTag) => {
+        perf.measure(name2, startTag, endTag);
         perf.clearMarks(startTag);
         perf.clearMarks(endTag);
       };
@@ -6626,7 +6750,7 @@ ${i3}
     });
   }
   const hasSymbol = typeof Symbol === "function" && typeof Symbol.toStringTag === "symbol";
-  const makeSymbol = (name) => hasSymbol ? Symbol(name) : name;
+  const makeSymbol = (name2) => hasSymbol ? Symbol(name2) : name2;
   const generateFormatCacheKey = (locale, key, source) => friendlyJSONstringify({ l: locale, k: key, s: source });
   const friendlyJSONstringify = (json) => JSON.stringify(json).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029").replace(/\u0027/g, "\\u0027");
   const isNumber = (val) => typeof val === "number" && isFinite(val);
@@ -7246,7 +7370,7 @@ ${i3}
       const msg = isFunction(options.messages) ? options.messages(key) : isObject$1(options.messages) ? options.messages[key] : false;
       return !msg ? options.parent ? options.parent.message(key) : DEFAULT_MESSAGE : msg;
     }
-    const _modifier = (name) => options.modifiers ? options.modifiers[name] : DEFAULT_MODIFIER;
+    const _modifier = (name2) => options.modifiers ? options.modifiers[name2] : DEFAULT_MODIFIER;
     const normalize = isPlainObject(options.processor) && isFunction(options.processor.normalize) ? options.processor.normalize : DEFAULT_NORMALIZE;
     const interpolate = isPlainObject(options.processor) && isFunction(options.processor.interpolate) ? options.processor.interpolate : DEFAULT_INTERPOLATE;
     const type = isPlainObject(options.processor) && isString(options.processor.type) ? options.processor.type : DEFAULT_MESSAGE_DATA_TYPE;
@@ -7445,7 +7569,7 @@ ${i3}
   function createCoreContext(options = {}) {
     const version = isString(options.version) ? options.version : VERSION$1;
     const locale = isString(options.locale) ? options.locale : "en-US";
-    const fallbackLocale = isArray(options.fallbackLocale) || isPlainObject(options.fallbackLocale) || isString(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
+    const fallbackLocale2 = isArray(options.fallbackLocale) || isPlainObject(options.fallbackLocale) || isString(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
     const messages2 = isPlainObject(options.messages) ? options.messages : { [locale]: {} };
     const datetimeFormats = isPlainObject(options.datetimeFormats) ? options.datetimeFormats : { [locale]: {} };
     const numberFormats = isPlainObject(options.numberFormats) ? options.numberFormats : { [locale]: {} };
@@ -7471,7 +7595,7 @@ ${i3}
       version,
       cid: _cid,
       locale,
-      fallbackLocale,
+      fallbackLocale: fallbackLocale2,
       messages: messages2,
       datetimeFormats,
       numberFormats,
@@ -7610,7 +7734,7 @@ ${i3}
   const NOOP_MESSAGE_FUNCTION = () => "";
   const isMessageFunction = (val) => isFunction(val);
   function translate(context, ...args) {
-    const { fallbackFormat, postTranslation, unresolving, fallbackLocale, messages: messages2 } = context;
+    const { fallbackFormat, postTranslation, unresolving, fallbackLocale: fallbackLocale2, messages: messages2 } = context;
     const [key, options] = parseTranslateArgs(...args);
     const missingWarn = isBoolean(options.missingWarn) ? options.missingWarn : context.missingWarn;
     const fallbackWarn = isBoolean(options.fallbackWarn) ? options.fallbackWarn : context.fallbackWarn;
@@ -7620,7 +7744,7 @@ ${i3}
     const enableDefaultMsg = fallbackFormat || defaultMsgOrKey !== "";
     const locale = isString(options.locale) ? options.locale : context.locale;
     escapeParameter && escapeParams(options);
-    let [format2, targetLocale, message] = !resolvedMessage ? resolveMessageFormat(context, key, locale, fallbackLocale, fallbackWarn, missingWarn) : [
+    let [format2, targetLocale, message] = !resolvedMessage ? resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWarn, missingWarn) : [
       key,
       locale,
       messages2[locale] || {}
@@ -7675,9 +7799,9 @@ ${i3}
       });
     }
   }
-  function resolveMessageFormat(context, key, locale, fallbackLocale, fallbackWarn, missingWarn) {
+  function resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWarn, missingWarn) {
     const { messages: messages2, onWarn } = context;
-    const locales = getLocaleChain(context, fallbackLocale, locale);
+    const locales = getLocaleChain(context, fallbackLocale2, locale);
     let message = {};
     let targetLocale;
     let format2 = null;
@@ -7908,7 +8032,7 @@ ${codeFrame}` : message);
     numberFormat: intlDefined && typeof Intl.NumberFormat !== "undefined"
   };
   function datetime(context, ...args) {
-    const { datetimeFormats, unresolving, fallbackLocale, onWarn } = context;
+    const { datetimeFormats, unresolving, fallbackLocale: fallbackLocale2, onWarn } = context;
     const { __datetimeFormatters } = context;
     if (!Availabilities.dateTimeFormat) {
       onWarn(getWarnMessage$1(
@@ -7922,7 +8046,7 @@ ${codeFrame}` : message);
     const fallbackWarn = isBoolean(options.fallbackWarn) ? options.fallbackWarn : context.fallbackWarn;
     const part = !!options.part;
     const locale = isString(options.locale) ? options.locale : context.locale;
-    const locales = getLocaleChain(context, fallbackLocale, locale);
+    const locales = getLocaleChain(context, fallbackLocale2, locale);
     if (!isString(key) || key === "") {
       return new Intl.DateTimeFormat(locale).format(value);
     }
@@ -8036,7 +8160,7 @@ ${codeFrame}` : message);
     }
   }
   function number(context, ...args) {
-    const { numberFormats, unresolving, fallbackLocale, onWarn } = context;
+    const { numberFormats, unresolving, fallbackLocale: fallbackLocale2, onWarn } = context;
     const { __numberFormatters } = context;
     if (!Availabilities.numberFormat) {
       onWarn(getWarnMessage$1(
@@ -8050,7 +8174,7 @@ ${codeFrame}` : message);
     const fallbackWarn = isBoolean(options.fallbackWarn) ? options.fallbackWarn : context.fallbackWarn;
     const part = !!options.part;
     const locale = isString(options.locale) ? options.locale : context.locale;
-    const locales = getLocaleChain(context, fallbackLocale, locale);
+    const locales = getLocaleChain(context, fallbackLocale2, locale);
     if (!isString(key) || key === "") {
       return new Intl.NumberFormat(locale).format(value);
     }
@@ -8389,7 +8513,7 @@ ${codeFrame}` : message);
         _context.locale = _locale.value;
       }
     });
-    const fallbackLocale = vue.computed({
+    const fallbackLocale2 = vue.computed({
       get: () => _fallbackLocale.value,
       set: (val) => {
         _fallbackLocale.value = val;
@@ -8617,7 +8741,7 @@ ${codeFrame}` : message);
     const composer = {
       id: composerID,
       locale,
-      fallbackLocale,
+      fallbackLocale: fallbackLocale2,
       get inheritLocale() {
         return _inheritLocale;
       },
@@ -8723,7 +8847,7 @@ ${codeFrame}` : message);
   }
   function convertComposerOptions(options) {
     const locale = isString(options.locale) ? options.locale : "en-US";
-    const fallbackLocale = isString(options.fallbackLocale) || isArray(options.fallbackLocale) || isPlainObject(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
+    const fallbackLocale2 = isString(options.fallbackLocale) || isArray(options.fallbackLocale) || isPlainObject(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
     const missing = isFunction(options.missing) ? options.missing : void 0;
     const missingWarn = isBoolean(options.silentTranslationWarn) || isRegExp(options.silentTranslationWarn) ? !options.silentTranslationWarn : true;
     const fallbackWarn = isBoolean(options.silentFallbackWarn) || isRegExp(options.silentFallbackWarn) ? !options.silentFallbackWarn : true;
@@ -8763,7 +8887,7 @@ ${codeFrame}` : message);
     const flatJson = options.flatJson;
     return {
       locale,
-      fallbackLocale,
+      fallbackLocale: fallbackLocale2,
       messages: messages2,
       flatJson,
       datetimeFormats,

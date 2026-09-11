@@ -450,7 +450,7 @@ uint16 OTATEST_Event( uint8 task_id, uint16 events )
 
     if ( events & SBP_START_DEVICE_EVT )
     {
-        // GAPRole_StartDevice 和 GAPBondMgr_Register 由 Task 8 完成，此处不重复
+        // GAPRole_StartDevice 和 GAPBondMgr_Register 由 Task 8 完成
         HCI_LE_ReadResolvingListSizeCmd();
         return ( events ^ SBP_START_DEVICE_EVT );
     }

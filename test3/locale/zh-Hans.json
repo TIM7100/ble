@@ -24,7 +24,7 @@
 	"schema.add-success": "新增成功",
 	
 	"index.app_version":"版本",
-	"index.latest_version":"最新版本",
+	"index.latest_version":"检查更新",
 	"index.app_update_title":"发现新版本",
 	"index.app_update_confirm":"检测到APP有更新，是否立即更新？",
 	"index.app_already_latest":"当前已是最新版本",
