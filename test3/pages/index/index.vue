@@ -2525,12 +2525,22 @@
 			
 			/**
 			 * 弹出框封装
+			 * 普通提示用 uni.showToast（新提示自动替换旧提示，避免弹窗堆积）；
+			 * 仅确认类（showCancel=true）仍用 uni.showModal。
 			 */
 			toast(content, showCancel = false) {
-				uni.showModal({
-					title: this.$t('api.message'),
-					content,
-					showCancel
+				if (showCancel) {
+					uni.showModal({
+						title: this.$t('api.message'),
+						content,
+						showCancel
+					});
+					return;
+				}
+				uni.showToast({
+					title: String(content || ''),
+					icon: 'none',
+					duration: 3000
 				});
 			},
 			

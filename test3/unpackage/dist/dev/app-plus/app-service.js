@@ -4767,12 +4767,22 @@ ${i3}
       },
       /**
        * 弹出框封装
+       * 普通提示用 uni.showToast（新提示自动替换旧提示，避免弹窗堆积）；
+       * 仅确认类（showCancel=true）仍用 uni.showModal。
        */
       toast(content, showCancel = false) {
-        uni.showModal({
-          title: this.$t("api.message"),
-          content,
-          showCancel
+        if (showCancel) {
+          uni.showModal({
+            title: this.$t("api.message"),
+            content,
+            showCancel
+          });
+          return;
+        }
+        uni.showToast({
+          title: String(content || ""),
+          icon: "none",
+          duration: 3e3
         });
       },
       /**
@@ -5142,7 +5152,7 @@ ${i3}
   const name = "HP9蓝牙升级仪";
   const appid = "__UNI__F83CD93";
   const description = "BLE升级仪初代测试";
-  const versionName = "1.0.0";
+  const versionName = "1.0.1";
   const versionCode = 1;
   const transformPx = false;
   const quickapp = {};

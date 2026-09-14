@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\simpleBlePeripheral.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\simpleBlePeripheral.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Sep 10 13:40:34 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri Sep 11 16:00:25 2026
 <BR><P>
 <H3>Maximum Stack Usage =       4528 bytes + Unknown(Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -820,7 +820,6 @@ Global Symbols
 <LI><a href="#[237]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;upgrader_hp9_serial (via Veneer)
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GATT_RegisterService (via Veneer)
 <LI><a href="#[29d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;heap_data_init (via Veneer)
-<LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo (via Veneer)
 <LI><a href="#[2f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessIdentityInfo (via Veneer)
 <LI><a href="#[2f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessEncryptionInformation (via Veneer)
 <LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smResponderSendNextKeyInfo (via Veneer)
@@ -831,6 +830,7 @@ Global Symbols
 <LI><a href="#[229]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sm_CMAC (via Veneer)
 <LI><a href="#[287]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;generate_subkey (via Veneer)
 <LI><a href="#[2ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smSavePairInfo (via Veneer)
+<LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo (via Veneer)
 </UL>
 
 <P><STRONG><a name="[1ce]"></a>osal_mem_free</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, bb_rom_sym_m0.txt(ABSOLUTE))
@@ -906,7 +906,6 @@ Global Symbols
 <LI><a href="#[241]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;update_backdoor (via Veneer)
 <LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ll_hw_go1 (via Veneer)
 <LI><a href="#[19e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TRNG_Rand (via Veneer)
-<LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo (via Veneer)
 <LI><a href="#[2fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessPairingRandom (via Veneer)
 <LI><a href="#[2f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessPairingConfirm (via Veneer)
 <LI><a href="#[2fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessMasterID (via Veneer)
@@ -967,6 +966,7 @@ Global Symbols
 <LI><a href="#[2d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smGenerateRandMsg (via Veneer)
 <LI><a href="#[2cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smGenerateConfirm (via Veneer)
 <LI><a href="#[2f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessPairingReq (via Veneer)
+<LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo (via Veneer)
 </UL>
 
 <P><STRONG><a name="[25b]"></a>osal_memdup</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, bb_rom_sym_m0.txt(ABSOLUTE))
@@ -3419,8 +3419,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[25a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gapPairingCompleteCB
 <LI><a href="#[2c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smFreePairingParams
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo
-<LI><a href="#[2fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessMasterID
+<BR>[Called By]<UL><LI><a href="#[2fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessMasterID
 <LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessIncoming
 <LI><a href="#[2f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessIdentityAddrInfo
 <LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smResponderProcessLTKReq
@@ -3428,6 +3427,7 @@ Global Symbols
 <LI><a href="#[2ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smTimedOut
 <LI><a href="#[2e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smProcessEncryptChange
 <LI><a href="#[2d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smNextPairingState
+<LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo
 </UL>
 
 <P><STRONG><a name="[2cb]"></a>smGenerateConfirm</STRONG> (Thumb, 36 bytes, Stack size 32 bytes, sm_pairing.o(i.smGenerateConfirm))
@@ -6649,7 +6649,6 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = smpResponderProcessIncoming &rArr; smpResponderProcessPairingRandom &rArr; sm_c1 &rArr; sm_c1new &rArr; sm_xor
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8 (via Veneer)
-<LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo
 <LI><a href="#[2fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessPairingRandom
 <LI><a href="#[2f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessPairingConfirm
 <LI><a href="#[2fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessMasterID
@@ -6660,6 +6659,7 @@ Local Symbols
 <LI><a href="#[2c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smEndPairing
 <LI><a href="#[2f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smAuthReqToUint8
 <LI><a href="#[2f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessPairingReq
+<LI><a href="#[2fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;smpResponderProcessSigningInfo
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> sm_rsppairing.o(.data)
 </UL>

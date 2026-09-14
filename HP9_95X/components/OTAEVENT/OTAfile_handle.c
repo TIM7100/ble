@@ -10,7 +10,10 @@
 #include "string.h"
 #include "OTAfile_handle.h"
 
-// 读取当前版本槽(0x11041000)为纯10字节版本串；未初始化统一返回 "0000000000"
+//当前固件版本 修改else中的版本
+
+
+// 读取当前版本槽(0x11041000)为纯10字节版本串；未初始化统一返回  当前出厂设置版本
 uint8 ota_get_local_version(char *version)
 {
     if (version != NULL)
@@ -23,7 +26,7 @@ uint8 ota_get_local_version(char *version)
         else
         {
             memset(version, 0, OTA_VERSION_LEN);
-            memcpy(version, "0000000000", OTA_VERSION_LEN);
+            memcpy(version, "2609100919", OTA_VERSION_LEN);
         }
         return OTA_FILE_SUCCESS;
     }

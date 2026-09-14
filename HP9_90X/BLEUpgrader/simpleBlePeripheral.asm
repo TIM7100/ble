@@ -33329,7 +33329,7 @@
 
     Input Comments:
     
-    p858-3
+    p32ec-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33337,7 +33337,6 @@
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: ArmCC [4d365d]
     ArmCC --c99 --split_sections --debug -c -o.\objects\upgraderhp9serial.o --depend=.\objects\upgraderhp9serial.d --cpu=Cortex-M0 --apcs=interwork -O3 --diag_suppress=9931 -I..\components\inc -I..\components\ble\controller -I..\components\osal\include -I..\components\ble\include -I..\components\ble\hci -I..\components\ble\host -I..\components\profiles\ota_app -I..\components\profiles\DevInfo -I..\components\profiles\SimpleProfile -I..\components\profiles\Roles -I.\source -I..\components\libraries\crc16 -I..\components\driver\watchdog -I..\components\driver\clock -I..\components\driver\pwrmgr -I..\components\driver\uart -I..\components\driver\gpio -I..\components\driver\timer -I..\components\driver\log -I..\components\driver\pwm -I..\components\driver\flash -I..\components\driver\led_light -I..\components\libraries\fs -I..\components\arch\cm0 -I..\misc -I..\components\libraries\datetime -I..\components\driver\key -I..\components\driver\my_i2c -I..\components\OTAEVENT -I.\RTE\_Target_1 -ID:\keil5data\ARM\CMSIS\5.9.0\CMSIS\Core\Include -ID:\keil5data\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0\Include -D__MICROLIB -DADV_NCONN_CFG=0x01 -DADV_CONN_CFG=0x02 -DSCAN_CFG=0x04 -DINIT_CFG=0x08 -DBROADCASTER_CFG=0x01 -DOBSERVER_CFG=0x02 -DPERIPHERAL_CFG=0x04 -DCENTRAL_CFG=0x08 -D__UVISION_VERSION=538 -D_RTE_ -DARMCM0 -D_RTE_ -DCFG_CP -DOSAL_CBTIMER_NUM_TASKS=1 -DMTU_SIZE=247 -DHOST_CONFIG=4 -DHCI_TL_NONE=1 -DENABLE_LOG_ROM_=0 -D_BUILD_FOR_DTM_=0 -DDEBUG_INFO=1 -DDBG_ROM_MAIN=0 -DAPP_CFG=0 -DOSALMEM_METRICS=0 -DPHY_MCU_TYPE=MCU_BUMBEE_M0 -DCFG_SLEEP_MODE=PWR_MODE_NO_SLEEP -DDEF_GAPBOND_MGR_ENABLE=0 -DUSE_FS=0 -DMAX_NUM_LL_CONN=1 --omf_browse=.\objects\upgraderhp9serial.crf source\UpgraderHp9Serial.c
-    
     
     
     
@@ -33411,7 +33410,7 @@
 
     Input Comments:
     
-    p3fbc-3
+    p1e74-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 

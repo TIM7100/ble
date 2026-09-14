@@ -13,7 +13,7 @@
 //当前固件版本 修改else中的版本
 
 
-// 读取当前版本槽(0x11041000)为纯10字节版本串；未初始化统一返回 "0000000000"
+// 读取当前版本槽(0x11041000)为纯10字节版本串；未初始化统一返回  当前出厂设置版本
 uint8 ota_get_local_version(char *version)
 {
     if (version != NULL)
@@ -45,7 +45,7 @@ uint8 ota_set_local_version(const char *version, uint8 state)
         return OTA_SAVE_VERSION_ERR;
     }
 
-    // 写入"待定版本"槽(0x11042000)，由boot在OTA成功后将其提升为当前版本(0x11041000)。
+    // 写入"待定版本"地址(0x11042000)，由boot在OTA成功后将其提升为当前版本(0x11041000)。
     // 因此Ota本身失败时不会误改当前版本。
     uint8 v[OTA_VERSION_LEN] = {0};
     memcpy(v, version, OTA_VERSION_LEN);
