@@ -1535,28 +1535,43 @@
 				if (ver.length > 10) ver = ver.substring(0, 10);
 				while (ver.length < 10) ver += ' ';   // 补足10字节，与固件OTA_VERSION_LEN一致
 				return new Promise(resolve => {
-					that.ota_ver_rsp = null;               // 清空独立标志，只信本次写命令后的新响应
-					that.chatMessage = string2Hex('4' + ver);
-					that.writeBLECharacteristicValue(that.connectedcharacteristicId[0]);
-					that.chatMessage = '';
-					// 轮询等待固件通知 Newest / Updata / NO_CMD
-					let elapsed = 0;
-					let tick = setInterval(() => {
-						if (that.ota_ver_rsp !== null) {
-							clearInterval(tick);
-							console.log('OTA版本对比响应:', that.ota_ver_rsp);
-							if (that.ota_ver_rsp.indexOf('Newest') >= 0) resolve('Newest');
-							else resolve('Updata');   // Updata/NO_CMD/未知 → 走更新
-							return;
-						}
-						elapsed += 100;
-						if (elapsed >= 1500) {           // 超时兜底：按需更新
-							clearInterval(tick);
-							that.ota_ver_rsp = null;
-							console.warn('OTA版本对比超时，按需更新');
-							resolve('Updata');
-						}
-					}, 100);
+					// 一次发送+等待对比；超时可重发一次
+					const sendOnce = (attempt) => {
+						that.ota_ver_rsp = null;               // 清空独立标志，只信本次写命令后的新响应
+						that.chatMessage = string2Hex('4' + ver);
+						that.writeBLECharacteristicValue(that.connectedcharacteristicId[0]);
+						that.chatMessage = '';
+						// 轮询等待固件通知 Newest / Updata / NO_CMD
+						let elapsed = 0;
+						let tick = setInterval(() => {
+							if (that.ota_ver_rsp !== null) {
+								clearInterval(tick);
+								console.log('OTA版本对比响应:', that.ota_ver_rsp);
+								const rsp = that.ota_ver_rsp;
+								that.ota_ver_rsp = null;
+								if (rsp.indexOf('Newest') >= 0) resolve('Newest');
+								else resolve('Updata');   // Updata/NO_CMD/未知 → 走更新
+								return;
+							}
+							elapsed += 100;
+							if (elapsed >= 3000) {           // 超时：第1次重发，第2次按需更新
+								clearInterval(tick);
+								that.ota_ver_rsp = null;
+								if (attempt === 0) {
+									console.warn('OTA版本对比第1次超时，重发一次');
+									sendOnce(1);
+								} else {
+									// 两次都超时：不更新，断开连接并提示重试
+									console.warn('OTA版本对比超时，断开连接');
+									that.lockInterface = false;
+									that.toast('版本更新连接超时，请重试');
+									that.Disconnect();
+									resolve('Newest');   // 上层拿到该值会走"已最新"分支，不再触发下载/更新
+								}
+							}
+						}, 100);
+					};
+					sendOnce(0);
 				});
 			},
 				

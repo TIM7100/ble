@@ -53,7 +53,7 @@
 	"BLE.service_fail":"获取服务失败，请重试!",
 	"BLE.characteristic_fail":"获取特征值失败，请重试!",
 	"BLE.new_version":"已全部是最新版本",
-	"BLE.updating_version":"正在更新HP9数据新版本",
+	"BLE.updating_version":"正在更新新版本HP9数据",
 	"BLE.lost_data":"数据丢失，请重新发送！",
 	
 	"Download.fail":"数据下载失败，请重新下载:",
