@@ -4119,20 +4119,20 @@ ${i3}
           }
           await this.gettxtsize().then((res) => {
             this.chatMessage_size = res;
-            formatAppLog("log", "at pages/index/index.vue:1617", this.chatMessage_size);
+            formatAppLog("log", "at pages/index/index.vue:1616", this.chatMessage_size);
             SectorCnt = (this.chatMessage_size + (this.data_lenth - 1)) / this.data_lenth;
             SectorCnt = parseInt(SectorCnt);
             KCnt = numberToArrayBuffer(this.CNT_K, 1);
             CCnt = numberToArrayBuffer(this.CNT_C, 1);
             MCnt = numberToArrayBuffer(this.CNT_M, 1);
             YCnt = numberToArrayBuffer(this.CNT_Y, 1);
-            formatAppLog("log", "at pages/index/index.vue:1629", SectorCnt);
+            formatAppLog("log", "at pages/index/index.vue:1628", SectorCnt);
             Sec = SectorCnt.toString(16);
             Sec = Sec.padStart(4, "0");
-            formatAppLog("log", "at pages/index/index.vue:1632", Sec);
-            formatAppLog("log", "at pages/index/index.vue:1633", KCnt);
+            formatAppLog("log", "at pages/index/index.vue:1631", Sec);
+            formatAppLog("log", "at pages/index/index.vue:1632", KCnt);
             this.chatMessage = string2Hex("2") + Sec + ab2hex(KCnt) + ab2hex(CCnt) + ab2hex(MCnt) + ab2hex(YCnt);
-            formatAppLog("log", "at pages/index/index.vue:1635", this.chatMessage);
+            formatAppLog("log", "at pages/index/index.vue:1634", this.chatMessage);
             this.writeBLECharacteristicValue(this.connectedcharacteristicId[0]);
             this.chatMessage = "";
           });
@@ -4143,7 +4143,7 @@ ${i3}
             icon: "none",
             duration: 99999
           });
-          formatAppLog("log", "at pages/index/index.vue:1657", this.valueChangeData.value);
+          formatAppLog("log", "at pages/index/index.vue:1656", this.valueChangeData.value);
           if (this.valueChangeData.value !== "OK") {
             return;
           }
@@ -4152,19 +4152,19 @@ ${i3}
           var num = 0;
           this.valueChangeData.value = "";
           await this.sendData(first, SectorCnt).then(async (res) => {
-            formatAppLog("log", "at pages/index/index.vue:1677", "succ");
+            formatAppLog("log", "at pages/index/index.vue:1676", "succ");
             await that2.sendDatastop(SectorCnt);
             that2.interval = setInterval(async () => {
               num += 1;
               setTimeout(async () => {
-                formatAppLog("log", "at pages/index/index.vue:1687", that2.valueChangeData.value);
+                formatAppLog("log", "at pages/index/index.vue:1686", that2.valueChangeData.value);
                 if (that2.valueChangeData.value !== "") {
                   clearInterval(that2.interval);
                   if (that2.valueChangeData.value.indexOf("ERR") >= 0) {
-                    formatAppLog("log", "at pages/index/index.vue:1698", that2.valueErrData);
+                    formatAppLog("log", "at pages/index/index.vue:1697", that2.valueErrData);
                     for (var i2 = 2; i2 < that2.valueErrData.length; i2++) {
                       RXdata = that2.valueErrData[i2];
-                      formatAppLog("log", "at pages/index/index.vue:1704", RXdata);
+                      formatAppLog("log", "at pages/index/index.vue:1703", RXdata);
                       await that2.sendData(RXdata - 1, RXdata).then((res2) => {
                         if (i2 === that2.valueErrData.length - 1) {
                           that2.sendDatastop(SectorCnt);
@@ -4178,6 +4178,7 @@ ${i3}
                     uni.hideToast();
                     this.lockInterface = false;
                     that2.toast(this.$t("BLE.new_version") + "\n");
+                    that2.clearDownloadFiles();
                   }
                 } else {
                   await that2.sendDatastop(SectorCnt);
@@ -4739,6 +4740,35 @@ ${i3}
           that2.toast("固件升级失败: " + msg);
         }
       },
+      // 清理下载目录中的文件（升级完成后调用，防止内存堆积）
+      clearDownloadFiles() {
+        var activeName = "";
+        try {
+          var activePath = getApp().globalData.path || "";
+          if (activePath) {
+            var idx = activePath.lastIndexOf("/");
+            activeName = idx >= 0 ? activePath.substring(idx + 1) : activePath;
+          }
+        } catch (e2) {
+        }
+        plus.io.requestFileSystem(plus.io.PUBLIC_DOWNLOADS, function(fs2) {
+          var directoryReader = fs2.root.createReader();
+          directoryReader.readEntries(function(entries) {
+            for (var i2 = 0; i2 < entries.length; i2++) {
+              var entry = entries[i2];
+              if (entry.isFile && entry.name !== activeName) {
+                entry.remove(function() {
+                  formatAppLog("log", "at pages/index/index.vue:2460", "已清理下载文件");
+                }, function(e2) {
+                  formatAppLog("warn", "at pages/index/index.vue:2462", "清理下载文件失败:", e2.message);
+                });
+              }
+            }
+          }, function(e2) {
+            formatAppLog("warn", "at pages/index/index.vue:2467", "读取下载目录失败:", e2.message);
+          });
+        });
+      },
       //保存下载的文件
       checkDownload() {
         plus.io.requestFileSystem(plus.io.PUBLIC_DOWNLOADS, function(fs2) {
@@ -4746,29 +4776,29 @@ ${i3}
           directoryReader.readEntries(function(entries) {
             var i2;
             for (i2 = 0; i2 < entries.length; i2++) {
-              formatAppLog("log", "at pages/index/index.vue:2449", entries[i2].name);
+              formatAppLog("log", "at pages/index/index.vue:2480", entries[i2].name);
               entries[i2].name = i2;
             }
             uni.hideToast();
           }, function(e2) {
-            formatAppLog("log", "at pages/index/index.vue:2472", "Read entries failed: " + e2.message);
+            formatAppLog("log", "at pages/index/index.vue:2485", "Read entries failed: " + e2.message);
           });
         });
       },
-      // 创建下载任务  
+      // 创建下载任务
       createDownload(Download_url) {
         var that2 = this;
         return new Promise((resolve, reject) => {
           var dtask = plus.downloader.createDownload(Download_url, {}, function(d2, status) {
             if (status == 200) {
-              formatAppLog("log", "at pages/index/index.vue:2487", "Download success: ");
-              formatAppLog("log", "at pages/index/index.vue:2488", d2);
+              formatAppLog("log", "at pages/index/index.vue:2500", "Download success: ");
+              formatAppLog("log", "at pages/index/index.vue:2501", d2);
               const path_buff = plus.io.convertLocalFileSystemURL(d2.filename);
-              formatAppLog("log", "at pages/index/index.vue:2492", path_buff);
+              formatAppLog("log", "at pages/index/index.vue:2505", path_buff);
               that2.checkDownload();
               resolve(path_buff);
             } else {
-              formatAppLog("log", "at pages/index/index.vue:2524", "Download failed: " + status);
+              formatAppLog("log", "at pages/index/index.vue:2537", "Download failed: " + status);
               uni.hideToast();
               that2.lockInterface = false;
               that2.toast(this.$t("Download.fail") + status);
@@ -5165,7 +5195,7 @@ ${i3}
   const name = "HP9蓝牙升级仪";
   const appid = "__UNI__F83CD93";
   const description = "BLE升级仪初代测试";
-  const versionName = "1.0.1";
+  const versionName = "1.0.0";
   const versionCode = 1;
   const transformPx = false;
   const quickapp = {};
@@ -5422,12 +5452,10 @@ ${i3}
       },
       // 请求权限并调用系统安装界面
       installApk(apkPath) {
-        var that2 = this;
         plus.runtime.install(apkPath, { force: true }, function() {
-          formatAppLog("log", "at pages/setup/setup.vue:211", "APK安装成功");
+          formatAppLog("log", "at pages/setup/setup.vue:213", "APK安装成功");
         }, function(e2) {
-          formatAppLog("error", "at pages/setup/setup.vue:213", "安装失败:", e2);
-          that2.toast("安装失败：" + (e2 && e2.message ? e2.message : e2.code));
+          formatAppLog("error", "at pages/setup/setup.vue:215", "安装失败:", e2);
         });
       }
     }

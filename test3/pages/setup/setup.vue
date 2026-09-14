@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<view class="content">
 		
 		<view class="connect2">
@@ -204,14 +204,15 @@
 			
 			// 请求权限并调用系统安装界面
 			installApk(apkPath) {
-			  var that = this;
 			  // plus.runtime.install 会调起系统安装器；
-			  // 系统会自行请求"安装未知应用"权限
+			  // 系统会自行请求"安装未知应用"权限。
+			  // 注意：success 回调只代表安装意图已被系统接收，此时系统安装器可能尚未读完APK，
+			  // 因此不能在这里立即删除APK（否则会提示"找不到安装包"）。
+			  // 该APK留在下载目录，由 index 页完整升级完成后的 clearDownloadFiles() 统一清理。
 			  plus.runtime.install(apkPath, { force: true }, function() {
 			    console.log('APK安装成功');
 			  }, function(e) {
 			    console.error('安装失败:', e);
-			    that.toast('安装失败：' + (e && e.message ? e.message : e.code));
 			  });
 			}
 		}

@@ -1605,7 +1605,6 @@
 						this.lockInterface = false; // 关闭遮盖层
 						
 						that.toast(that.$t('BLE.new_version') + '\n'); //"已是最新版本"
-						
 						return;
 					}
 					
@@ -1731,7 +1730,8 @@
 											
 											// toast("已是最新版本" + this.updata_version_before);
 											that.toast(this.$t('BLE.new_version') + '\n'); //"已是最新版本"
-										
+											// 唯一清理点：仅在OTA升级完且HP9数据升级完成后清理下载文件，防止内存堆积
+											that.clearDownloadFiles();
 										}
 										
 									}
@@ -2438,8 +2438,39 @@
 			
 			
 			
+			// 清理下载目录中的文件（升级完成后调用，防止内存堆积）
+			clearDownloadFiles() {
+				var that = this;
+				// 当前正在使用的HP9数据文件（本地版本==云端版本时会复用，不能删）
+				var activeName = '';
+				try {
+					var activePath = getApp().globalData.path || '';
+					if (activePath) {
+						var idx = activePath.lastIndexOf('/');
+						activeName = idx >= 0 ? activePath.substring(idx + 1) : activePath;
+					}
+				} catch (e) {}
+				plus.io.requestFileSystem(plus.io.PUBLIC_DOWNLOADS, function(fs) {
+					var directoryReader = fs.root.createReader();
+					directoryReader.readEntries(function(entries) {
+						for (var i = 0; i < entries.length; i++) {
+							var entry = entries[i];
+							if (entry.isFile && entry.name !== activeName) {
+								entry.remove(function() {
+									console.log('已清理下载文件');
+								}, function(e) {
+									console.warn('清理下载文件失败:', e.message);
+								});
+							}
+						}
+					}, function(e) {
+						console.warn('读取下载目录失败:', e.message);
+					});
+				});
+			},
+			
 			//保存下载的文件
-			checkDownload(){ 
+			checkDownload(){  
 				var that = this;
 			    plus.io.requestFileSystem( plus.io.PUBLIC_DOWNLOADS, function(fs){  
 			            var directoryReader = fs.root.createReader();  
@@ -2447,34 +2478,16 @@
 			                var i;  
 			                for( i = 0; i < entries.length; i++ ) {  
 			                            console.log( entries[i].name );  
-										// console.log(getApp().globalData.path);
 			                            entries[i].name = i  
 			                }
 							uni.hideToast();
-							// that.lockInterface = false; // 关闭遮盖层
-							// uni.getStorage({
-							// 	key:'path',
-							// 	success: function (res) {
-							// 		console.log(res.data.path);
-							// 		getApp().globalData.path = res.data.path;
-							// 		toast("数据更新成功");
-									
-							// 		that.TxUpdate();  //发送数据
-							// 	},
-							// 	fail: function() {
-							// 		console.log('数据地址获取失败，请重新下载更新');
-									
-							// 		toast("数据地址获取失败，请重新下载更新");
-							// 	}
-							// })
-							
 			            }, function ( e ) {  
 			                console.log( "Read entries failed: " + e.message );  
 			            });  
 			        });  
 			},   
 			
-			// 创建下载任务  
+			// 创建下载任务
 			createDownload(Download_url) {  
 				// let path_test = "/storage/emulated/0/Android/data/io.dcloud.HBuilder/";
 				// let path_test = "/storage/emulated/0/Android/data/com.BLE903.android/";
