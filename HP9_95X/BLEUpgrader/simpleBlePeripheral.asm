@@ -35,8 +35,8 @@
     Program header entries: 3
     Section header entries: 19
 
-    Program header offset: 752508 (0x000b7b7c)
-    Section header offset: 752604 (0x000b7bdc)
+    Program header offset: 701408 (0x000ab3e0)
+    Section header offset: 701504 (0x000ab440)
 
     Section header string table index: 18
 
@@ -5468,10 +5468,10 @@
     $d
         0x1fff41f6:    0000        ..      DCW    0
         0x1fff41f8:    20706553    Sep     DCD    544236883
-        0x1fff41fc:    32203920     9 2    DCD    840972576
+        0x1fff41fc:    32203631    16 2    DCD    840971825
         0x1fff4200:    00363230    026.    DCD    3551792
         0x1fff4204:    343a3930    09:4    DCD    876230960
-        0x1fff4208:    38353a34    4:58    DCD    943012404
+        0x1fff4208:    38313a34    4:18    DCD    942750260
         0x1fff420c:    00000000    ....    DCD    0
         0x1fff4210:    00000020     ...    DCD    32
         0x1fff4214:    1fff7874    tx..    DCD    536836212
@@ -32657,7 +32657,7 @@
     Flags       : None (0x00000000)
     Addr        : 0x00000000
     File Offset : 88792 (0x15ad8)
-    Size        : 192856 bytes (0x2f158)
+    Size        : 167912 bytes (0x28fe8)
     Link        : SHN_UNDEF
     Info        : 0
     Alignment   : 1
@@ -32672,8 +32672,8 @@
     Type        : SHT_PROGBITS (0x00000001)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 281648 (0x44c30)
-    Size        : 62136 bytes (0xf2b8)
+    File Offset : 256704 (0x3eac0)
+    Size        : 61056 bytes (0xee80)
     Link        : SHN_UNDEF
     Info        : 0
     Alignment   : 1
@@ -32688,7 +32688,7 @@
     Type        : SHT_PROGBITS (0x00000001)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 343784 (0x53ee8)
+    File Offset : 317760 (0x4d940)
     Size        : 30248 bytes (0x7628)
     Link        : SHN_UNDEF
     Info        : 0
@@ -32704,8 +32704,8 @@
     Type        : SHT_PROGBITS (0x00000001)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 374032 (0x5b510)
-    Size        : 115872 bytes (0x1c4a0)
+    File Offset : 348008 (0x54f68)
+    Size        : 91728 bytes (0x16650)
     Link        : SHN_UNDEF
     Info        : 0
     Alignment   : 1
@@ -32720,8 +32720,8 @@
     Type        : SHT_PROGBITS (0x00000001)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 489904 (0x779b0)
-    Size        : 10218 bytes (0x27ea)
+    File Offset : 439736 (0x6b5b8)
+    Size        : 9282 bytes (0x2442)
     Link        : SHN_UNDEF
     Info        : 0
     Alignment   : 1
@@ -32736,7 +32736,7 @@
     Type        : SHT_SYMTAB (0x00000002)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 500124 (0x7a19c)
+    File Offset : 449020 (0x6d9fc)
     Size        : 72416 bytes (0x11ae0)
     Link        : Section 15 (.strtab)
     Info        : Last local symbol no = 2657
@@ -32752,7 +32752,7 @@
     Type        : SHT_STRTAB (0x00000003)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 572540 (0x8bc7c)
+    File Offset : 521436 (0x7f4dc)
     Size        : 60424 bytes (0xec08)
     Link        : SHN_UNDEF
     Info        : 0
@@ -32768,7 +32768,7 @@
     Type        : SHT_NOTE (0x00000007)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 632964 (0x9a884)
+    File Offset : 581860 (0x8e0e4)
     Size        : 40 bytes (0x28)
     Link        : SHN_UNDEF
     Info        : 0
@@ -32793,8 +32793,8 @@
     Type        : SHT_PROGBITS (0x00000001)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 633004 (0x9a8ac)
-    Size        : 119324 bytes (0x1d21c)
+    File Offset : 581900 (0x8e10c)
+    Size        : 119328 bytes (0x1d220)
     Link        : SHN_UNDEF
     Info        : 0
     Alignment   : 1
@@ -32817,7 +32817,7 @@
 
     Input Comments:
     
-    p4668-3
+    p36f8-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32836,7 +32836,7 @@
 
     Input Comments:
     
-    p5a0-3
+    p6010-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32848,7 +32848,6 @@
     
     
     
-    
     uart.o
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
@@ -32856,7 +32855,7 @@
 
     Input Comments:
     
-    p3294-3
+    p2088-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32873,7 +32872,7 @@
 
     Input Comments:
     
-    p29f0-3
+    p238c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32891,7 +32890,7 @@
 
     Input Comments:
     
-    p1fa4-3
+    p758-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32901,6 +32900,7 @@
     ArmCC --c99 --split_sections --debug -c -o.\objects\gpio.o --depend=.\objects\gpio.d --cpu=Cortex-M0 --apcs=interwork -O3 --diag_suppress=9931 -I..\components\inc -I..\components\ble\controller -I..\components\osal\include -I..\components\ble\include -I..\components\ble\hci -I..\components\ble\host -I..\components\profiles\ota_app -I..\components\profiles\DevInfo -I..\components\profiles\SimpleProfile -I..\components\profiles\Roles -I.\source -I..\components\libraries\crc16 -I..\components\driver\watchdog -I..\components\driver\clock -I..\components\driver\pwrmgr -I..\components\driver\uart -I..\components\driver\gpio -I..\components\driver\timer -I..\components\driver\log -I..\components\driver\pwm -I..\components\driver\flash -I..\components\driver\led_light -I..\components\libraries\fs -I..\components\arch\cm0 -I..\misc -I..\components\libraries\datetime -I..\components\driver\key -I..\components\driver\my_i2c -I..\components\OTAEVENT -I.\RTE\_Target_1 -ID:\keil5data\ARM\CMSIS\5.9.0\CMSIS\Core\Include -ID:\keil5data\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0\Include -D__MICROLIB -DADV_NCONN_CFG=0x01 -DADV_CONN_CFG=0x02 -DSCAN_CFG=0x04 -DINIT_CFG=0x08 -DBROADCASTER_CFG=0x01 -DOBSERVER_CFG=0x02 -DPERIPHERAL_CFG=0x04 -DCENTRAL_CFG=0x08 -D__UVISION_VERSION=538 -D_RTE_ -DARMCM0 -D_RTE_ -DCFG_CP -DOSAL_CBTIMER_NUM_TASKS=1 -DMTU_SIZE=247 -DHOST_CONFIG=4 -DHCI_TL_NONE=1 -DENABLE_LOG_ROM_=0 -D_BUILD_FOR_DTM_=0 -DDEBUG_INFO=1 -DDBG_ROM_MAIN=0 -DAPP_CFG=0 -DOSALMEM_METRICS=0 -DPHY_MCU_TYPE=MCU_BUMBEE_M0 -DCFG_SLEEP_MODE=PWR_MODE_NO_SLEEP -DDEF_GAPBOND_MGR_ENABLE=0 -DUSE_FS=0 -DMAX_NUM_LL_CONN=1 --omf_browse=.\objects\gpio.crf ..\components\driver\gpio\gpio.c
     
     
+    
     timer.o
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
@@ -32908,7 +32908,7 @@
 
     Input Comments:
     
-    p44fc-3
+    p4744-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32926,7 +32926,7 @@
 
     Input Comments:
     
-    p5ba4-3
+    p4980-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32943,7 +32943,7 @@
 
     Input Comments:
     
-    pa40-3
+    p5ca4-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32955,7 +32955,6 @@
     
     
     
-    
     pwm.o
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
@@ -32963,7 +32962,7 @@
 
     Input Comments:
     
-    p34f0-3
+    p3670-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -32983,7 +32982,7 @@
 
     Input Comments:
     
-    p5720-3
+    p14bc-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33001,7 +33000,7 @@
 
     Input Comments:
     
-    p34ac-3
+    p4d44-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33019,7 +33018,7 @@
 
     Input Comments:
     
-    p41d0-3
+    p2064-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33039,7 +33038,7 @@
 
     Input Comments:
     
-    p87c-3
+    p250c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33049,6 +33048,9 @@
     ArmCC --c99 --split_sections --debug -c -o.\objects\my_printf.o --depend=.\objects\my_printf.d --cpu=Cortex-M0 --apcs=interwork -O3 --diag_suppress=9931 -I..\components\inc -I..\components\ble\controller -I..\components\osal\include -I..\components\ble\include -I..\components\ble\hci -I..\components\ble\host -I..\components\profiles\ota_app -I..\components\profiles\DevInfo -I..\components\profiles\SimpleProfile -I..\components\profiles\Roles -I.\source -I..\components\libraries\crc16 -I..\components\driver\watchdog -I..\components\driver\clock -I..\components\driver\pwrmgr -I..\components\driver\uart -I..\components\driver\gpio -I..\components\driver\timer -I..\components\driver\log -I..\components\driver\pwm -I..\components\driver\flash -I..\components\driver\led_light -I..\components\libraries\fs -I..\components\arch\cm0 -I..\misc -I..\components\libraries\datetime -I..\components\driver\key -I..\components\driver\my_i2c -I..\components\OTAEVENT -I.\RTE\_Target_1 -ID:\keil5data\ARM\CMSIS\5.9.0\CMSIS\Core\Include -ID:\keil5data\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0\Include -D__MICROLIB -DADV_NCONN_CFG=0x01 -DADV_CONN_CFG=0x02 -DSCAN_CFG=0x04 -DINIT_CFG=0x08 -DBROADCASTER_CFG=0x01 -DOBSERVER_CFG=0x02 -DPERIPHERAL_CFG=0x04 -DCENTRAL_CFG=0x08 -D__UVISION_VERSION=538 -D_RTE_ -DARMCM0 -D_RTE_ -DCFG_CP -DOSAL_CBTIMER_NUM_TASKS=1 -DMTU_SIZE=247 -DHOST_CONFIG=4 -DHCI_TL_NONE=1 -DENABLE_LOG_ROM_=0 -D_BUILD_FOR_DTM_=0 -DDEBUG_INFO=1 -DDBG_ROM_MAIN=0 -DAPP_CFG=0 -DOSALMEM_METRICS=0 -DPHY_MCU_TYPE=MCU_BUMBEE_M0 -DCFG_SLEEP_MODE=PWR_MODE_NO_SLEEP -DDEF_GAPBOND_MGR_ENABLE=0 -DUSE_FS=0 -DMAX_NUM_LL_CONN=1 --omf_browse=.\objects\my_printf.crf ..\components\driver\log\my_printf.c
     
     
+    
+    
+    
     myi2c.o
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
@@ -33056,7 +33058,7 @@
 
     Input Comments:
     
-    p1ac4-3
+    p3c6c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33073,7 +33075,7 @@
 
     Input Comments:
     
-    p5624-3
+    p4754-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33091,7 +33093,7 @@
 
     Input Comments:
     
-    p1be0-3
+    p1634-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33111,7 +33113,7 @@
 
     Input Comments:
     
-    p5384-3
+    p249c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33131,7 +33133,7 @@
 
     Input Comments:
     
-    p41f8-3
+    p38a0-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33151,7 +33153,7 @@
 
     Input Comments:
     
-    p22f0-3
+    p28cc-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33169,7 +33171,7 @@
 
     Input Comments:
     
-    p373c-3
+    p54e4-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33189,7 +33191,7 @@
 
     Input Comments:
     
-    p4fb8-3
+    p1ce8-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33207,7 +33209,7 @@
 
     Input Comments:
     
-    p2078-3
+    p278c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33224,7 +33226,7 @@
 
     Input Comments:
     
-    pf74-3
+    p60f4-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33232,7 +33234,6 @@
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: ArmCC [4d365d]
     ArmCC --c99 --split_sections --debug -c -o.\objects\ota_app_service.o --depend=.\objects\ota_app_service.d --cpu=Cortex-M0 --apcs=interwork -O3 --diag_suppress=9931 -I..\components\inc -I..\components\ble\controller -I..\components\osal\include -I..\components\ble\include -I..\components\ble\hci -I..\components\ble\host -I..\components\profiles\ota_app -I..\components\profiles\DevInfo -I..\components\profiles\SimpleProfile -I..\components\profiles\Roles -I.\source -I..\components\libraries\crc16 -I..\components\driver\watchdog -I..\components\driver\clock -I..\components\driver\pwrmgr -I..\components\driver\uart -I..\components\driver\gpio -I..\components\driver\timer -I..\components\driver\log -I..\components\driver\pwm -I..\components\driver\flash -I..\components\driver\led_light -I..\components\libraries\fs -I..\components\arch\cm0 -I..\misc -I..\components\libraries\datetime -I..\components\driver\key -I..\components\driver\my_i2c -I..\components\OTAEVENT -I.\RTE\_Target_1 -ID:\keil5data\ARM\CMSIS\5.9.0\CMSIS\Core\Include -ID:\keil5data\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0\Include -D__MICROLIB -DADV_NCONN_CFG=0x01 -DADV_CONN_CFG=0x02 -DSCAN_CFG=0x04 -DINIT_CFG=0x08 -DBROADCASTER_CFG=0x01 -DOBSERVER_CFG=0x02 -DPERIPHERAL_CFG=0x04 -DCENTRAL_CFG=0x08 -D__UVISION_VERSION=538 -D_RTE_ -DARMCM0 -D_RTE_ -DCFG_CP -DOSAL_CBTIMER_NUM_TASKS=1 -DMTU_SIZE=247 -DHOST_CONFIG=4 -DHCI_TL_NONE=1 -DENABLE_LOG_ROM_=0 -D_BUILD_FOR_DTM_=0 -DDEBUG_INFO=1 -DDBG_ROM_MAIN=0 -DAPP_CFG=0 -DOSALMEM_METRICS=0 -DPHY_MCU_TYPE=MCU_BUMBEE_M0 -DCFG_SLEEP_MODE=PWR_MODE_NO_SLEEP -DDEF_GAPBOND_MGR_ENABLE=0 -DUSE_FS=0 -DMAX_NUM_LL_CONN=1 --omf_browse=.\objects\ota_app_service.crf ..\components\profiles\ota_app\ota_app_service.c
-    
     
     
     
@@ -33248,7 +33249,7 @@
 
     Input Comments:
     
-    p441c-3
+    p470c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33268,7 +33269,7 @@
 
     Input Comments:
     
-    p19a4-3
+    p2a48-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33291,7 +33292,7 @@
 
     Input Comments:
     
-    p4a30-3
+    p5c5c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33309,7 +33310,7 @@
 
     Input Comments:
     
-    p58f4-3
+    p3d14-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33329,7 +33330,7 @@
 
     Input Comments:
     
-    p3324-3
+    p51a8-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33352,7 +33353,7 @@
 
     Input Comments:
     
-    p510c-3
+    p5a5c-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33372,7 +33373,7 @@
 
     Input Comments:
     
-    p4358-3
+    p3968-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33390,7 +33391,7 @@
 
     Input Comments:
     
-    p4e30-3
+    p1414-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33410,7 +33411,7 @@
 
     Input Comments:
     
-    p4550-3
+    p48b4-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -33436,7 +33437,7 @@
 
     Input Comments:
     
-    p2ea0-3
+    p2bb4-3
     
     Component: ARM Compiler 5.06 update 7 (build 960) Tool: armasm [4d35fa]
     armasm --debug --diag_suppress=9931,9931,1602,1073 --cpu=Cortex-M0 --fpu=SoftVFP --apcs=/interwork/interwork --no_divide 
@@ -34027,7 +34028,7 @@
     Type        : SHT_STRTAB (0x00000003)
     Flags       : None (0x00000000)
     Addr        : 0x00000000
-    File Offset : 752328 (0xb7ac8)
+    File Offset : 701228 (0xab32c)
     Size        : 180 bytes (0xb4)
     Link        : SHN_UNDEF
     Info        : 0
