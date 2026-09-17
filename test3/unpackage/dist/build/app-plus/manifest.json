@@ -7,10 +7,10 @@
   "id": "__UNI__F83CD93",
   "name": "HP9蓝牙升级仪",
   "version": {
-    "name": "1.0.2",
-    "code": 3
+    "name": "1.0.1",
+    "code": 2
   },
-  "description": "BLE升级仪初代测试",
+  "description": "BLE升级仪",
   "developer": {
     "name": "",
     "email": "",

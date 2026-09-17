@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HeartRateViewController">
+            <connections>
+                <outlet property="heartImageView" destination="vj3-Wv-Nsw" id="sdH-RJ-5lV"/>
+                <outlet property="heartRateLabel" destination="YSY-DJ-h1M" id="HNa-rd-Mvl"/>
+                <outlet property="insideView" destination="7Kw-v9-x0t" id="Bxt-54-9dI"/>
+                <outlet property="outView" destination="7oG-dm-tYS" id="p1i-tV-xIL"/>
+                <outlet property="unitLabel" destination="ZPa-Yz-Fbw" id="9sX-y7-06Q"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7oG-dm-tYS">
+                    <rect key="frame" x="62.5" y="100" width="250" height="250"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Kw-v9-x0t">
+                            <rect key="frame" x="10" y="10" width="230" height="230"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YSY-DJ-h1M">
+                                    <rect key="frame" x="15" y="88" width="200" height="70"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="70" id="LJ8-JM-lXS"/>
+                                        <constraint firstAttribute="width" constant="200" id="gsb-pV-4CT"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="80"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="BPM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZPa-Yz-Fbw">
+                                    <rect key="frame" x="65" y="168" width="100" height="40"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="100" id="F3s-hL-P9d"/>
+                                        <constraint firstAttribute="height" constant="40" id="UG0-Mj-kTx"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" red="0.38823529410000002" green="0.69411764710000001" blue="0.12549019610000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstItem="ZPa-Yz-Fbw" firstAttribute="top" secondItem="YSY-DJ-h1M" secondAttribute="bottom" constant="10" id="5dz-9i-JSq"/>
+                                <constraint firstAttribute="height" constant="230" id="7Bv-ZQ-l5p"/>
+                                <constraint firstAttribute="bottom" secondItem="YSY-DJ-h1M" secondAttribute="bottom" constant="72" id="O5m-w5-mHr"/>
+                                <constraint firstItem="ZPa-Yz-Fbw" firstAttribute="centerX" secondItem="YSY-DJ-h1M" secondAttribute="centerX" id="gHF-Wj-JsJ"/>
+                                <constraint firstAttribute="width" constant="230" id="ov0-kB-gLX"/>
+                                <constraint firstItem="YSY-DJ-h1M" firstAttribute="centerX" secondItem="7Kw-v9-x0t" secondAttribute="centerX" id="xbK-M6-DMr"/>
+                            </constraints>
+                        </view>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_heart" translatesAutoresizingMaskIntoConstraints="NO" id="vj3-Wv-Nsw">
+                            <rect key="frame" x="105" y="40" width="40" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="7ly-Bf-kpD"/>
+                                <constraint firstAttribute="width" constant="40" id="Y4q-ga-daV"/>
+                            </constraints>
+                        </imageView>
+                    </subviews>
+                    <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="vj3-Wv-Nsw" firstAttribute="centerX" secondItem="7Kw-v9-x0t" secondAttribute="centerX" id="CBu-wI-xPM"/>
+                        <constraint firstItem="vj3-Wv-Nsw" firstAttribute="top" secondItem="7oG-dm-tYS" secondAttribute="top" constant="40" id="Dv4-QI-hCQ"/>
+                        <constraint firstAttribute="height" constant="250" id="F3K-Rt-WH4"/>
+                        <constraint firstAttribute="width" constant="250" id="jc6-LZ-6qx"/>
+                        <constraint firstItem="7Kw-v9-x0t" firstAttribute="centerY" secondItem="7oG-dm-tYS" secondAttribute="centerY" id="tuD-dr-Gfc"/>
+                        <constraint firstItem="7Kw-v9-x0t" firstAttribute="centerX" secondItem="7oG-dm-tYS" secondAttribute="centerX" id="wwX-lR-nmH"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="7oG-dm-tYS" firstAttribute="centerX" secondItem="Q5M-cg-NOt" secondAttribute="centerX" id="Iaf-DQ-net"/>
+                <constraint firstItem="7oG-dm-tYS" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" constant="80" id="Uao-IA-i0F"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
+            <point key="canvasLocation" x="53.600000000000001" y="67.916041979010501"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="ic_heart" width="50" height="50"/>
+    </resources>
+</document>

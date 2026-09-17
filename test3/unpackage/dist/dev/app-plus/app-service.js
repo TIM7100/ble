@@ -4117,25 +4117,57 @@ ${i3}
             that2.toast(that2.$t("BLE.new_version") + "\n");
             return;
           }
-          await this.gettxtsize().then((res) => {
+          let fileMissing = false;
+          await this.gettxtsize().then(async (res) => {
+            if (!res || res <= 0) {
+              formatAppLog("warn", "at pages/index/index.vue:1618", "数据文件缺失，尝试从缓存URL重新下载");
+              let cached = uni.getStorageSync(that2.chip_name);
+              if (cached && cached.URL) {
+                try {
+                  let newPath = await that2.createDownload(cached.URL);
+                  if (newPath) {
+                    uni.setStorageSync(that2.chip_name, {
+                      name: cached.name,
+                      version: cached.version,
+                      URL: cached.URL,
+                      path: newPath
+                    });
+                    getApp().globalData.path = newPath;
+                    res = await that2.gettxtsize();
+                  }
+                } catch (e2) {
+                  formatAppLog("warn", "at pages/index/index.vue:1635", "重新下载失败:", e2);
+                }
+              }
+            }
+            if (!res || res <= 0) {
+              fileMissing = true;
+              return;
+            }
             this.chatMessage_size = res;
-            formatAppLog("log", "at pages/index/index.vue:1616", this.chatMessage_size);
+            formatAppLog("log", "at pages/index/index.vue:1645", this.chatMessage_size);
             SectorCnt = (this.chatMessage_size + (this.data_lenth - 1)) / this.data_lenth;
             SectorCnt = parseInt(SectorCnt);
             KCnt = numberToArrayBuffer(this.CNT_K, 1);
             CCnt = numberToArrayBuffer(this.CNT_C, 1);
             MCnt = numberToArrayBuffer(this.CNT_M, 1);
             YCnt = numberToArrayBuffer(this.CNT_Y, 1);
-            formatAppLog("log", "at pages/index/index.vue:1628", SectorCnt);
+            formatAppLog("log", "at pages/index/index.vue:1657", SectorCnt);
             Sec = SectorCnt.toString(16);
             Sec = Sec.padStart(4, "0");
-            formatAppLog("log", "at pages/index/index.vue:1631", Sec);
-            formatAppLog("log", "at pages/index/index.vue:1632", KCnt);
+            formatAppLog("log", "at pages/index/index.vue:1660", Sec);
+            formatAppLog("log", "at pages/index/index.vue:1661", KCnt);
             this.chatMessage = string2Hex("2") + Sec + ab2hex(KCnt) + ab2hex(CCnt) + ab2hex(MCnt) + ab2hex(YCnt);
-            formatAppLog("log", "at pages/index/index.vue:1634", this.chatMessage);
+            formatAppLog("log", "at pages/index/index.vue:1663", this.chatMessage);
             this.writeBLECharacteristicValue(this.connectedcharacteristicId[0]);
             this.chatMessage = "";
           });
+          if (fileMissing) {
+            that2.lockInterface = false;
+            uni.hideToast();
+            that2.toast(that2.$t("index.download_failed"));
+            return;
+          }
           await delay(2e3);
           uni.showToast({
             title: this.$t("BLE.updating_version"),
@@ -4143,7 +4175,7 @@ ${i3}
             icon: "none",
             duration: 99999
           });
-          formatAppLog("log", "at pages/index/index.vue:1656", this.valueChangeData.value);
+          formatAppLog("log", "at pages/index/index.vue:1692", this.valueChangeData.value);
           if (this.valueChangeData.value !== "OK") {
             return;
           }
@@ -4152,19 +4184,19 @@ ${i3}
           var num = 0;
           this.valueChangeData.value = "";
           await this.sendData(first, SectorCnt).then(async (res) => {
-            formatAppLog("log", "at pages/index/index.vue:1676", "succ");
+            formatAppLog("log", "at pages/index/index.vue:1712", "succ");
             await that2.sendDatastop(SectorCnt);
             that2.interval = setInterval(async () => {
               num += 1;
               setTimeout(async () => {
-                formatAppLog("log", "at pages/index/index.vue:1686", that2.valueChangeData.value);
+                formatAppLog("log", "at pages/index/index.vue:1722", that2.valueChangeData.value);
                 if (that2.valueChangeData.value !== "") {
                   clearInterval(that2.interval);
                   if (that2.valueChangeData.value.indexOf("ERR") >= 0) {
-                    formatAppLog("log", "at pages/index/index.vue:1697", that2.valueErrData);
+                    formatAppLog("log", "at pages/index/index.vue:1733", that2.valueErrData);
                     for (var i2 = 2; i2 < that2.valueErrData.length; i2++) {
                       RXdata = that2.valueErrData[i2];
-                      formatAppLog("log", "at pages/index/index.vue:1703", RXdata);
+                      formatAppLog("log", "at pages/index/index.vue:1739", RXdata);
                       await that2.sendData(RXdata - 1, RXdata).then((res2) => {
                         if (i2 === that2.valueErrData.length - 1) {
                           that2.sendDatastop(SectorCnt);
@@ -4207,28 +4239,28 @@ ${i3}
               (fileEntry) => {
                 fileEntry.file(
                   function(file) {
-                    formatAppLog("log", "at pages/index/index.vue:1785", "读取文件");
+                    formatAppLog("log", "at pages/index/index.vue:1821", "读取文件");
                     let fileReader = new plus.io.FileReader();
                     fileReader.readAsText(file, "utf-8");
                     fileReader.onload = (data) => {
-                      formatAppLog("log", "at pages/index/index.vue:1794", "读取成功:", data);
+                      formatAppLog("log", "at pages/index/index.vue:1830", "读取成功:", data);
                       resolve(data.target.result);
                     };
                     fileReader.onloadend = (data) => {
-                      formatAppLog("log", "at pages/index/index.vue:1801", "读取成功2:", data.target.result);
+                      formatAppLog("log", "at pages/index/index.vue:1837", "读取成功2:", data.target.result);
                     };
                     fileReader.onerror = (e2) => {
-                      formatAppLog("log", "at pages/index/index.vue:1808", "读取失败：", e2);
+                      formatAppLog("log", "at pages/index/index.vue:1844", "读取失败：", e2);
                     };
                   },
                   (error) => {
-                    formatAppLog("log", "at pages/index/index.vue:1813", "新建获取文件失败", error);
+                    formatAppLog("log", "at pages/index/index.vue:1849", "新建获取文件失败", error);
                     return;
                   }
                 );
               },
               (e2) => {
-                formatAppLog("log", "at pages/index/index.vue:1819", "请求文件系统失败", e2.message);
+                formatAppLog("log", "at pages/index/index.vue:1855", "请求文件系统失败", e2.message);
                 return;
               }
             );
@@ -4237,16 +4269,18 @@ ${i3}
       },
       //得到文件的大小
       gettxtsize() {
-        formatAppLog("log", "at pages/index/index.vue:1834", getApp().globalData.path);
+        formatAppLog("log", "at pages/index/index.vue:1870", getApp().globalData.path);
         return new Promise((resolve) => {
           plus.io.getFileInfo({
             filePath: getApp().globalData.path,
             digestAlgorithm: "md5",
             success: function(res) {
-              formatAppLog("log", "at pages/index/index.vue:1840", res);
+              formatAppLog("log", "at pages/index/index.vue:1876", res);
               resolve(res.size);
             },
             fail: function(e2) {
+              formatAppLog("warn", "at pages/index/index.vue:1882", "获取下载文件信息失败:", e2.message);
+              resolve(0);
             }
           });
         });
@@ -4274,7 +4308,7 @@ ${i3}
               });
             },
             function(e2) {
-              formatAppLog("log", "at pages/index/index.vue:1885", "Resolve file URL failed: " + e2.message);
+              formatAppLog("log", "at pages/index/index.vue:1924", "Resolve file URL failed: " + e2.message);
             }
           );
         });
@@ -4284,7 +4318,7 @@ ${i3}
       reconnectForOTA() {
         var that2 = this;
         let originalDeviceId = this.ota_reconnect_device_id;
-        formatAppLog("log", "at pages/index/index.vue:1898", "reconnectForOTA, deviceId:", originalDeviceId);
+        formatAppLog("log", "at pages/index/index.vue:1937", "reconnectForOTA, deviceId:", originalDeviceId);
         if (!originalDeviceId) {
           that2.toast(this.$t("fwOTA.reconnect_id_lost"));
           that2.ota_reconnecting = false;
@@ -4300,7 +4334,7 @@ ${i3}
           uni.createBLEConnection({
             deviceId: dId,
             success: (res) => {
-              formatAppLog("log", "at pages/index/index.vue:1918", "OTA模式重连成功, deviceId:", dId);
+              formatAppLog("log", "at pages/index/index.vue:1957", "OTA模式重连成功, deviceId:", dId);
               that2.connected = true;
               if (!that2.equipment || that2.equipment.length === 0) {
                 that2.equipment = [{ deviceId: dId, name: "" }];
@@ -4311,11 +4345,11 @@ ${i3}
               setTimeout(() => {
                 that2.findFirmwareOTAService().then(() => {
                   uni.hideToast();
-                  formatAppLog("log", "at pages/index/index.vue:1934", "OTA服务就绪，开始固件升级");
+                  formatAppLog("log", "at pages/index/index.vue:1973", "OTA服务就绪，开始固件升级");
                   that2.TxUpdate_Firmware();
                 }).catch((err) => {
                   uni.hideToast();
-                  formatAppLog("error", "at pages/index/index.vue:1939", "OTA服务发现失败:", err);
+                  formatAppLog("error", "at pages/index/index.vue:1978", "OTA服务发现失败:", err);
                   that2.toast(this.$t("fwOTA.service_discover_fail") + ": " + (err.errMsg || err));
                   that2.ota_reconnecting = false;
                   that2.lockInterface = false;
@@ -4323,10 +4357,10 @@ ${i3}
               }, 1500);
             },
             fail: (e2) => {
-              formatAppLog("error", "at pages/index/index.vue:1947", "连接失败 deviceId=" + dId + ":", e2);
+              formatAppLog("error", "at pages/index/index.vue:1986", "连接失败 deviceId=" + dId + ":", e2);
               let originalId = that2.ota_reconnect_device_id;
               if (dId !== originalId) {
-                formatAppLog("log", "at pages/index/index.vue:1951", "OTA MAC失败，尝试原始MAC:", originalId);
+                formatAppLog("log", "at pages/index/index.vue:1990", "OTA MAC失败，尝试原始MAC:", originalId);
                 tryConnect(originalId);
               } else {
                 uni.hideToast();
@@ -4352,7 +4386,7 @@ ${i3}
             return otaMac.match(/.{2}/g).join(":");
           }
         } catch (e2) {
-          formatAppLog("error", "at pages/index/index.vue:1980", "计算OTA MAC失败:", e2);
+          formatAppLog("error", "at pages/index/index.vue:2019", "计算OTA MAC失败:", e2);
         }
         return mac;
       },
@@ -4365,22 +4399,22 @@ ${i3}
           uni.getBLEDeviceServices({
             deviceId,
             success: (res) => {
-              formatAppLog("log", "at pages/index/index.vue:1996", "发现服务:", JSON.stringify(res.services));
+              formatAppLog("log", "at pages/index/index.vue:2035", "发现服务:", JSON.stringify(res.services));
               const fwSvc = res.services.find(
                 (s2) => s2.uuid.toLowerCase() === FW_OTA_SVC_UUID.toLowerCase()
               );
               if (!fwSvc) {
-                formatAppLog("error", "at pages/index/index.vue:2004", "未找到固件OTA服务");
+                formatAppLog("error", "at pages/index/index.vue:2043", "未找到固件OTA服务");
                 reject("未找到固件OTA服务");
                 return;
               }
-              formatAppLog("log", "at pages/index/index.vue:2009", "找到固件OTA服务:", fwSvc.uuid);
+              formatAppLog("log", "at pages/index/index.vue:2048", "找到固件OTA服务:", fwSvc.uuid);
               that2.connectedserviceId = fwSvc.uuid;
               uni.getBLEDeviceCharacteristics({
                 deviceId,
                 serviceId: fwSvc.uuid,
                 success: (res2) => {
-                  formatAppLog("log", "at pages/index/index.vue:2017", "固件OTA特征值:", JSON.stringify(res2));
+                  formatAppLog("log", "at pages/index/index.vue:2056", "固件OTA特征值:", JSON.stringify(res2));
                   const chars = res2.characteristics;
                   let cmdChar = null, notifyChar = null, dataChar = null;
                   for (let i2 = 0; i2 < chars.length; i2++) {
@@ -4407,9 +4441,9 @@ ${i3}
                   that2.connectedcharacteristicId[1] = notifyChar.uuid;
                   that2.connectedcharacteristicId[2] = dataChar.uuid;
                   that2.characteristicsData = [cmdChar, notifyChar, dataChar];
-                  formatAppLog("log", "at pages/index/index.vue:2052", "OTA CMD:", that2.connectedcharacteristicId[0]);
-                  formatAppLog("log", "at pages/index/index.vue:2053", "OTA Notify:", that2.connectedcharacteristicId[1]);
-                  formatAppLog("log", "at pages/index/index.vue:2054", "OTA Data:", that2.connectedcharacteristicId[2]);
+                  formatAppLog("log", "at pages/index/index.vue:2091", "OTA CMD:", that2.connectedcharacteristicId[0]);
+                  formatAppLog("log", "at pages/index/index.vue:2092", "OTA Notify:", that2.connectedcharacteristicId[1]);
+                  formatAppLog("log", "at pages/index/index.vue:2093", "OTA Data:", that2.connectedcharacteristicId[2]);
                   setTimeout(() => {
                     that2.CharacteristicValueChangeCB = false;
                     that2.notifyBLECharacteristicValueChange();
@@ -4417,13 +4451,13 @@ ${i3}
                   }, 300);
                 },
                 fail: (e2) => {
-                  formatAppLog("error", "at pages/index/index.vue:2066", "获取固件OTA特征值失败:", e2);
+                  formatAppLog("error", "at pages/index/index.vue:2105", "获取固件OTA特征值失败:", e2);
                   reject(e2);
                 }
               });
             },
             fail: (e2) => {
-              formatAppLog("error", "at pages/index/index.vue:2072", "发现服务失败:", e2);
+              formatAppLog("error", "at pages/index/index.vue:2111", "发现服务失败:", e2);
               reject(e2);
             }
           });
@@ -4446,10 +4480,10 @@ ${i3}
               },
               fail: (err) => {
                 if (retry < 10) {
-                  formatAppLog("log", "at pages/index/index.vue:2098", "OTA写入失败，重试:", retry + 1, err);
+                  formatAppLog("log", "at pages/index/index.vue:2137", "OTA写入失败，重试:", retry + 1, err);
                   setTimeout(() => doSend(retry + 1), 200);
                 } else {
-                  formatAppLog("error", "at pages/index/index.vue:2101", "OTA写入最终失败:", err);
+                  formatAppLog("error", "at pages/index/index.vue:2140", "OTA写入最终失败:", err);
                   reject(err);
                 }
               }
@@ -4522,9 +4556,9 @@ ${i3}
           part.addrInt = parseInt(part.address, 16);
           delete part.hexData;
         }
-        formatAppLog("log", "at pages/index/index.vue:2186", "解析到分区数:", partitions.length);
+        formatAppLog("log", "at pages/index/index.vue:2225", "解析到分区数:", partitions.length);
         for (let i2 = 0; i2 < partitions.length; i2++) {
-          formatAppLog("log", "at pages/index/index.vue:2188", "分区" + i2 + ": address=0x" + partitions[i2].address + ", size=" + partitions[i2].size + ", addrInt=0x" + partitions[i2].addrInt.toString(16));
+          formatAppLog("log", "at pages/index/index.vue:2227", "分区" + i2 + ": address=0x" + partitions[i2].address + ", size=" + partitions[i2].size + ", addrInt=0x" + partitions[i2].addrInt.toString(16));
         }
         return partitions;
       },
@@ -4589,7 +4623,7 @@ ${i3}
             if (isFlash) {
               let fa = base + offset >>> 0;
               if (fa + sub.length - 1 > FLASH_MAX) {
-                formatAppLog("warn", "at pages/index/index.vue:2246", "分区超出flash末尾，跳过: 0x" + fa.toString(16));
+                formatAppLog("warn", "at pages/index/index.vue:2285", "分区超出flash末尾，跳过: 0x" + fa.toString(16));
                 continue;
               }
               chunks.push({ flash_addr: fa, run_addr: fa, size: sub.length, data: sub, crc });
@@ -4599,12 +4633,12 @@ ${i3}
               sramFlashOffset = sramFlashOffset + sub.length + 8 >>> 0;
               chunks.push({ flash_addr: fa, run_addr: ra, size: sub.length, data: sub, crc });
             } else {
-              formatAppLog("warn", "at pages/index/index.vue:2257", "跳过未知分区: 0x" + p2.address);
+              formatAppLog("warn", "at pages/index/index.vue:2296", "跳过未知分区: 0x" + p2.address);
             }
           }
         }
         for (let c2 of chunks) {
-          formatAppLog("log", "at pages/index/index.vue:2263", "OTA子分区: flash=0x" + c2.flash_addr.toString(16) + " run=0x" + c2.run_addr.toString(16) + " size=" + c2.size + " crc=0x" + c2.crc.toString(16));
+          formatAppLog("log", "at pages/index/index.vue:2302", "OTA子分区: flash=0x" + c2.flash_addr.toString(16) + " run=0x" + c2.run_addr.toString(16) + " size=" + c2.size + " crc=0x" + c2.crc.toString(16));
         }
         return chunks;
       },
@@ -4654,7 +4688,7 @@ ${i3}
           if (chunks.length > 255) {
             throw "分区块数超过255，固件过大";
           }
-          formatAppLog("log", "at pages/index/index.vue:2325", "OTA分区块数:", chunks.length);
+          formatAppLog("log", "at pages/index/index.vue:2364", "OTA分区块数:", chunks.length);
           let pktSize = this.MTU - 3;
           if (pktSize < 20)
             pktSize = 20;
@@ -4663,9 +4697,9 @@ ${i3}
           this.ota_rsp_extra = null;
           let startCmd = new Uint8Array([1, chunks.length & 255, 255]);
           await this.writeHexData(this.connectedcharacteristicId[0], ab2hex(startCmd));
-          formatAppLog("log", "at pages/index/index.vue:2339", "已发送START_OTA(01 " + chunks.length.toString(16) + " ff), 等待0x81...");
+          formatAppLog("log", "at pages/index/index.vue:2378", "已发送START_OTA(01 " + chunks.length.toString(16) + " ff), 等待0x81...");
           await this.waitOTA(129, 1e4);
-          formatAppLog("log", "at pages/index/index.vue:2341", "收到START_OTA应答(0x81)");
+          formatAppLog("log", "at pages/index/index.vue:2380", "收到START_OTA应答(0x81)");
           let totalSize = 0;
           for (let c2 of chunks)
             totalSize += c2.size;
@@ -4688,9 +4722,9 @@ ${i3}
             partCmd.set(this.intToLE(c2.size), 10);
             partCmd.set(this.intToLE(c2.crc), 14);
             await this.writeHexData(this.connectedcharacteristicId[0], ab2hex(partCmd));
-            formatAppLog("log", "at pages/index/index.vue:2372", "已发送PARTITION_INFO[" + ci + "] flash=0x" + c2.flash_addr.toString(16) + " run=0x" + c2.run_addr.toString(16) + " size=" + c2.size + " crc=0x" + c2.crc.toString(16) + ", 等待0x84...");
+            formatAppLog("log", "at pages/index/index.vue:2411", "已发送PARTITION_INFO[" + ci + "] flash=0x" + c2.flash_addr.toString(16) + " run=0x" + c2.run_addr.toString(16) + " size=" + c2.size + " crc=0x" + c2.crc.toString(16) + ", 等待0x84...");
             await this.waitOTA(132, 1e4);
-            formatAppLog("log", "at pages/index/index.vue:2376", "收到分区信息应答(0x84)");
+            formatAppLog("log", "at pages/index/index.vue:2415", "收到分区信息应答(0x84)");
             let pkts = Math.ceil(c2.size / pktSize);
             for (let j2 = 0; j2 < pkts; j2++) {
               let start = j2 * pktSize;
@@ -4703,20 +4737,20 @@ ${i3}
               that2.pgList = Math.floor(totalSent / totalSize * 100);
             }
             if (isLast) {
-              formatAppLog("log", "at pages/index/index.vue:2393", "最后一个分区发送完毕, 等待0x83...");
+              formatAppLog("log", "at pages/index/index.vue:2432", "最后一个分区发送完毕, 等待0x83...");
               await this.waitOTA(131, 15e3);
-              formatAppLog("log", "at pages/index/index.vue:2395", "收到OTA完成应答(0x83)");
+              formatAppLog("log", "at pages/index/index.vue:2434", "收到OTA完成应答(0x83)");
             } else {
               try {
                 await this.waitOTA(133, 15e3);
-                formatAppLog("log", "at pages/index/index.vue:2399", "收到分区完成应答(0x85), chunk " + ci);
+                formatAppLog("log", "at pages/index/index.vue:2438", "收到分区完成应答(0x85), chunk " + ci);
               } catch (e2) {
-                formatAppLog("warn", "at pages/index/index.vue:2402", "分区完成应答超时，尝试继续:", e2);
+                formatAppLog("warn", "at pages/index/index.vue:2441", "分区完成应答超时，尝试继续:", e2);
               }
             }
           }
           await this.writeHexData(this.connectedcharacteristicId[0], "04");
-          formatAppLog("log", "at pages/index/index.vue:2409", "已发送REBOOT(04), 设备重启中...");
+          formatAppLog("log", "at pages/index/index.vue:2448", "已发送REBOOT(04), 设备重启中...");
           uni.hideToast();
           that2.pg_flag = false;
           that2.pgList = 0;
@@ -4729,7 +4763,7 @@ ${i3}
             that2.toast(this.$t("fwOTA.done_reboot"));
           }
         } catch (err) {
-          formatAppLog("error", "at pages/index/index.vue:2425", "固件OTA失败:", err);
+          formatAppLog("error", "at pages/index/index.vue:2464", "固件OTA失败:", err);
           uni.hideToast();
           that2.pg_flag = false;
           that2.pgList = 0;
@@ -4742,7 +4776,6 @@ ${i3}
       },
       // 清理下载目录中的文件（升级完成后调用，防止内存堆积）
       clearDownloadFiles() {
-        var that2 = this;
         var activeName = "";
         try {
           var activePath = getApp().globalData.path || "";
@@ -4752,53 +4785,23 @@ ${i3}
           }
         } catch (e2) {
         }
-        var removedNames = [];
         plus.io.requestFileSystem(plus.io.PUBLIC_DOWNLOADS, function(fs2) {
           var directoryReader = fs2.root.createReader();
           directoryReader.readEntries(function(entries) {
             for (var i2 = 0; i2 < entries.length; i2++) {
               var entry = entries[i2];
               if (entry.isFile && entry.name !== activeName) {
-                removedNames.push(entry.name);
                 entry.remove(function() {
-                  formatAppLog("log", "at pages/index/index.vue:2463", "已清理下载文件");
+                  formatAppLog("log", "at pages/index/index.vue:2499", "已清理下载文件");
                 }, function(e2) {
-                  formatAppLog("warn", "at pages/index/index.vue:2465", "清理下载文件失败:", e2.message);
+                  formatAppLog("warn", "at pages/index/index.vue:2501", "清理下载文件失败:", e2.message);
                 });
               }
             }
-            if (removedNames.length > 0) {
-              that2.clearCacheByRemovedFiles(removedNames);
-            }
           }, function(e2) {
-            formatAppLog("warn", "at pages/index/index.vue:2475", "读取下载目录失败:", e2.message);
+            formatAppLog("warn", "at pages/index/index.vue:2506", "读取下载目录失败:", e2.message);
           });
         });
-      },
-      // 根据被删除的文件名，清理storage中指向这些文件的型号缓存记录
-      clearCacheByRemovedFiles(removedNames) {
-        try {
-          var info = uni.getStorageInfoSync();
-          var keys = info.keys || [];
-          for (var k = 0; k < keys.length; k++) {
-            var key = keys[k];
-            try {
-              var cache2 = uni.getStorageSync(key);
-              if (!cache2 || !cache2.path)
-                continue;
-              var p2 = String(cache2.path);
-              var idx = p2.lastIndexOf("/");
-              var fname = idx >= 0 ? p2.substring(idx + 1) : p2;
-              if (removedNames.indexOf(fname) >= 0) {
-                uni.removeStorageSync(key);
-                formatAppLog("log", "at pages/index/index.vue:2495", "已同步清理型号缓存:", key);
-              }
-            } catch (e2) {
-            }
-          }
-        } catch (e2) {
-          formatAppLog("warn", "at pages/index/index.vue:2500", "同步清理缓存失败:", e2);
-        }
       },
       //保存下载的文件
       checkDownload() {
@@ -4807,12 +4810,12 @@ ${i3}
           directoryReader.readEntries(function(entries) {
             var i2;
             for (i2 = 0; i2 < entries.length; i2++) {
-              formatAppLog("log", "at pages/index/index.vue:2512", entries[i2].name);
+              formatAppLog("log", "at pages/index/index.vue:2519", entries[i2].name);
               entries[i2].name = i2;
             }
             uni.hideToast();
           }, function(e2) {
-            formatAppLog("log", "at pages/index/index.vue:2517", "Read entries failed: " + e2.message);
+            formatAppLog("log", "at pages/index/index.vue:2524", "Read entries failed: " + e2.message);
           });
         });
       },
@@ -4822,14 +4825,14 @@ ${i3}
         return new Promise((resolve, reject) => {
           var dtask = plus.downloader.createDownload(Download_url, {}, function(d2, status) {
             if (status == 200) {
-              formatAppLog("log", "at pages/index/index.vue:2532", "Download success: ");
-              formatAppLog("log", "at pages/index/index.vue:2533", d2);
+              formatAppLog("log", "at pages/index/index.vue:2539", "Download success: ");
+              formatAppLog("log", "at pages/index/index.vue:2540", d2);
               const path_buff = plus.io.convertLocalFileSystemURL(d2.filename);
-              formatAppLog("log", "at pages/index/index.vue:2537", path_buff);
+              formatAppLog("log", "at pages/index/index.vue:2544", path_buff);
               that2.checkDownload();
               resolve(path_buff);
             } else {
-              formatAppLog("log", "at pages/index/index.vue:2569", "Download failed: " + status);
+              formatAppLog("log", "at pages/index/index.vue:2576", "Download failed: " + status);
               uni.hideToast();
               that2.lockInterface = false;
               that2.toast(this.$t("Download.fail") + status);
@@ -5225,7 +5228,7 @@ ${i3}
   const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$1], ["__file", "E:/ble/SLB/test3/pages/index/index.vue"]]);
   const name = "HP9蓝牙升级仪";
   const appid = "__UNI__F83CD93";
-  const description = "BLE升级仪初代测试";
+  const description = "BLE升级仪";
   const versionName = "1.0.1";
   const versionCode = 2;
   const transformPx = false;

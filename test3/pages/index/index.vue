@@ -1611,7 +1611,36 @@
 					
 					
 					//第二、读取数据包的大小
-					await this.gettxtsize().then(res => {
+					let fileMissing = false;	// 数据文件缺失标志（缺失且下载失败时为true）
+					await this.gettxtsize().then(async res => {
+						// 文件缺失（resolve 0）：尝试重新下载对应型号数据，成功后再读取
+						if (!res || res <= 0) {
+							console.warn('数据文件缺失，尝试从缓存URL重新下载');
+							let cached = uni.getStorageSync(that.chip_name);
+							if (cached && cached.URL) {
+								try {
+									let newPath = await that.createDownload(cached.URL);
+									if (newPath) {
+										uni.setStorageSync(that.chip_name, {
+											name: cached.name,
+											version: cached.version,
+											URL: cached.URL,
+											path: newPath,
+										});
+										getApp().globalData.path = newPath;
+										// 重新读取文件大小
+										res = await that.gettxtsize();
+									}
+								} catch (e) {
+									console.warn('重新下载失败:', e);
+								}
+							}
+						}
+						// 重新下载后仍缺失：置标志后跳过本次发送流程
+						if (!res || res <= 0) {
+							fileMissing = true;
+							return;
+						}
 						this.chatMessage_size = res;
 						console.log(this.chatMessage_size);
 						SectorCnt = (this.chatMessage_size + (this.data_lenth - 1)) / (this.data_lenth);	//计算需要发送的次数
@@ -1640,7 +1669,14 @@
 						
 					});
 
-					
+					// 若数据文件缺失且重新下载失败，则退出本次升级流程，避免卡灰屏
+					if (fileMissing) {
+						that.lockInterface = false;
+						uni.hideToast();
+						that.toast(that.$t('index.download_failed'));
+						return;
+					}
+
 					await delay(2000);
 					
 					
@@ -1837,15 +1873,18 @@
 						filePath: getApp().globalData.path,
 						digestAlgorithm:"md5",
 						success: function(res) {
-							console.log(res);
-							resolve(res.size);		//返回文件的大小，用于计算需要发送多少个包
-						},
-						fail: function(e) {
-							
-						}
-						
-					});
+						console.log(res);
+						resolve(res.size);		//返回文件的大小，用于计算需要发送多少个包
+					},
+					fail: function(e) {
+						// 文件不存在或读取失败：resolve(0) 作为"文件缺失"信号，
+						// 避免 Promise 永不 resolve 导致升级卡在灰屏。
+						console.warn('获取下载文件信息失败:', e.message);
+						resolve(0);
+					}
+					
 				});
+			});
 			},
 			
 			//读取bin文件的数据并转化

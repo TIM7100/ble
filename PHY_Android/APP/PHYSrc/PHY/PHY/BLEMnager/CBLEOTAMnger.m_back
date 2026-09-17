@@ -1,0 +1,338 @@
+//
+//  CBLEMnger.m
+//  PHY
+//
+//  Created by Harry on 2019/3/23.
+//  Copyright © 2019年 phy. All rights reserved.
+//
+
+#import "CBLEOTAMnger.h"
+#import "CBLECenterMnger.h"
+#import "JCDataConvert.h"
+#import "Partition.h"
+#import "FileManager.h"
+#import "CBLEDataParse.h"
+
+
+
+
+
+#if 0
+
+@interface CBLEOTAMnger()
+@property(nonatomic,copy)NSString          *strLocFilePath;
+@property(nonatomic,copy)NSString          *strCurMacAddr;
+@property(nonatomic,strong)FileManager     *fileManager;
+@property(nonatomic,strong)NSMutableArray  *partitionArray;
+@property(assign,nonatomic) int partitionIndex;
+@property(assign,nonatomic) int blockIndex;
+@property(assign,nonatomic) int cmdIndex;
+@property(assign,nonatomic) int flash_addr;
+@property(assign,nonatomic) float totalSize;
+@property(assign,nonatomic) float finshSize;
+@property(assign,nonatomic) int retryTimes;
+@property(assign,nonatomic) int errorTimes;
+
+@end
+
+@implementation CBLEOTAMnger
+
+
+-(instancetype)init{
+    if ( self = [super init] ){
+        
+        ADD_MESSAGE(BLEMSG_CENTER_NEWPHERAL, msgForNewPheral:);
+        ADD_MESSAGE(BLEMSG_CENTER_NEWPHERAL_OTA, msgForPheralOTAOk);
+        ADD_MESSAGE(BLEMSG_PHERAL_CONNECT_RST, msgForPheralConnect);
+        ADD_MESSAGE(BLEMSG_PHERAL_DISCONNECT,  msgForPheralDisConnect);
+        ADD_MESSAGE(BLEMSG_PHERAL_OATCMD_ACK,  msgForOTACmdAck:);
+    }
+    return self;
+}
+
+-(void)dealloc{
+    REMOVE_MESSAGE(BLEMSG_CENTER_NEWPHERAL, nil);
+    REMOVE_MESSAGE(BLEMSG_CENTER_POWERON, nil);
+    REMOVE_MESSAGE(BLEMSG_CENTER_NEWPHERAL_OTA, nil);
+    REMOVE_MESSAGE(BLEMSG_PHERAL_DISCONNECT, nil);
+}
+
+-(void)msgForPheralDisConnect{
+    NSLog(@"开始扫描蓝牙.....");
+    [[CBLECenterMnger shareMnger].dataPherals removeAll];
+    [[CBLECenterMnger shareMnger] cmdStartScan];
+}
+
+-(void)msgForNewPheral:(NSNotification*)noti{
+    
+    CDataPheralInfo *data = noti.object;
+    BOOL bOK = [data isSamePheralWithMacAddr:_strCurMacAddr];
+    if ( bOK ){
+        @autoreleasepool{
+            dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [[CBLECenterMnger shareMnger] cmdStopScan];
+                [NSThread sleepForTimeInterval:0.5f];
+                [[CBLECenterMnger shareMnger] cmdConnect2Pheral:data];
+            }
+        );
+        };
+    } else{
+        NSLog(@"不是当前的设备！");
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+-(void)msgForPheralOTAOk{
+    //等待OTA模式启动
+    NSLog(@" 自动连接完成，OTA模式已经准备好");
+    [self startOTACmd:_strLocFilePath];
+}
+
+-(void)msgForPheralConnect{
+    NSLog(@" 自动连接已经完成，等待OTA模式完成！");
+#if 0
+    //蓝牙连接上
+    if ( [[CBLECenterMnger shareMnger] isConnectOK]){
+        [_scanTimer invalidate];
+        _scanTimer = nil;
+        [_scanTimeOut invalidate];
+        _scanTimeOut = nil;
+        [[CBLECenterMnger shareMnger] cmdStopScan];
+        [self showSearchingIcon:NO];
+        
+        //提示框提示调用成功
+        CDataPheralInfo *pheral = [CBLECenterMnger shareMnger].curPheral;
+        NSString *tip = [NSString stringWithFormat:@"蓝牙连接成功: %@,状态：%@",
+                         pheral.peripheral.name,
+                         pheral.peripheral.state==CBPeripheralStateConnected?@"连接成功":@"未知" ];
+        UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"提示" message:tip preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            [self popVC];
+            if (self.updateMainPageRightBtn) {
+                self.updateMainPageRightBtn();
+            }
+        }];
+        [alertC addAction:action];
+        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alertC animated:YES completion:nil];
+    } else {
+        [self showMessageAutoHide:@"蓝牙连接失败，请重新尝试！" afterDelay:3.0];
+    }
+#endif
+}
+
+
+-(void)startOTAWithLocFile:(NSString*)filePath{
+
+    _strLocFilePath = filePath;
+    [self loadLocHexFile:filePath];
+    CDataPheralInfo *curPheral = [CBLECenterMnger shareMnger].curPheral;
+    
+    //1.如果是OTA，直接进入升级模式
+    if ( curPheral.bIsInOTA ){
+        [self startOTACmd:filePath];
+        
+    } else {
+        //1.保存当前MacAddr,2.断开当前连接
+        _strCurMacAddr = curPheral.adverMacAddr;
+        @autoreleasepool{
+            dispatch_async( dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                [[CBLECenterMnger shareMnger] appCmdSwitch2OTA];
+                [NSThread sleepForTimeInterval:1.0f];
+                [[CBLECenterMnger shareMnger] cmdDisconnectCurPheral];
+            }
+        );
+        };
+    }
+}
+
+-(void)startOTACmd:(NSString*)filePath{
+    
+    NSLog(@"开始发送OTA启动命令！");
+    _fileManager = [[FileManager alloc] firmWareFile:filePath];
+    self.totalSize = self.fileManager.length;
+    [self initData];
+
+    //发送命令01xx00 xx为文件分成的段数
+    NSInteger nNums = _fileManager.list.count;
+    [[CBLECenterMnger shareMnger] otaCmsStart:nNums];    
+}
+
+
+-(void)loadLocHexFile:(NSString*)filePath{
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSData *fileData = [fileManager contentsAtPath:filePath];
+    NSString *strFileData = [JCDataConvert ConvertHexToString:fileData];
+
+    _partitionArray = [NSMutableArray arrayWithCapacity:0];
+    _partitionArray = [[Partition alloc] analyzePartition:strFileData];
+}
+
+-(void)initData{
+    //OTA相关
+    self.partitionIndex = 0;
+    self.blockIndex = 0;
+    self.cmdIndex = 0;
+    self.flash_addr = 0;
+    self.finshSize = 0;
+    self.retryTimes = 3;
+}
+
+
+-(void)msgForOTACmdAck:(NSNotification*)noti{
+    
+    CBLEDataParse *tool = noti.object;
+    if ( tool == nil ) return;
+    //@autoreleasepool {
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [self parseInThread:tool];
+        //});
+    //};
+}
+
+-(void)parseInThread:(CBLEDataParse*)tool{
+    
+    if ( tool.ackData.srcCmd == OTA_RSP_START_OTA ){
+        
+        Partition *partition = self.fileManager.list[self.partitionIndex];
+        int checsum =[self getPartitionCheckSum:partition];
+        NSString *cmd = [self make_part_cmd:self.partitionIndex flash_addr:self.flash_addr run_addr:partition.address size:partition.partitionLength checksum:checsum];
+        
+        NSData *cmdData = [JCDataConvert hexToBytes:cmd];
+        [[CBLECenterMnger shareMnger] wristWriteOTACmd:cmdData bInOTA:YES];
+        self.blockIndex = 0;
+        NSLog(@"                 01-->OTAACK:0x81 发送地址信息......");
+    } else if ( tool.ackData.srcCmd == OTA_RSP_PARITION_COMPLETE ){
+        
+        NSLog(@"                 02-->OTAACK:0x84 发送地址信息成功，发送数据[%ld::%ld]......",self.partitionIndex,self.blockIndex);
+        self.cmdIndex = 0;
+        Partition *partition = self.fileManager.list[self.partitionIndex];
+        NSArray *partitionArray = partition.partitionArray;
+        
+        if ( 1 ){
+        //while ( self.blockIndex < partitionArray.count) {
+            if(self.errorTimes > 0){
+                self.errorTimes = 0;
+            }
+            if(  self.blockIndex < partitionArray.count ){
+                NSInteger cmdIndex = 0;
+                NSArray *cmdList = partitionArray[self.blockIndex];
+                NSLog(@"          84:下标%d,partitionArray个数%lu",self.blockIndex,(unsigned long)partitionArray.count);
+                cmdIndex = 0;
+                while (cmdIndex < cmdList.count) {
+                    
+                    if(self.errorTimes > 0){
+                        self.errorTimes = 0;
+                    }
+                    
+                    if(cmdIndex < cmdList.count){
+                        NSData *data = [JCDataConvert hexToBytes:cmdList[cmdIndex]];
+                        [[CBLECenterMnger shareMnger] wristWriteOTAData:data];
+                    }
+                    cmdIndex ++;
+                }
+            }
+            self.blockIndex ++;
+        }
+    } else if ( tool.ackData.srcCmd == OTA_RSP_BLOCK_COMPLETE ){
+        
+        NSLog(@"               03-->OTAACK:0x87 一组16*20 ota数据发送成功开始下一组......[%d::%ld]......",self.partitionIndex,self.blockIndex);
+        Partition *partition = self.fileManager.list[self.partitionIndex];
+        NSArray *partitionArray = partition.partitionArray;
+        if ( 1 ) {
+            if ( 1 ) {
+            //while ( self.blockIndex < partitionArray.count ) {
+                if(self.errorTimes > 0){
+                    self.errorTimes = 0;
+                }
+                if(self.blockIndex < partitionArray.count){
+                    NSInteger cmdIndex = 0;
+                    NSArray *cmdList = partitionArray[self.blockIndex];
+                    NSLog(@"   87:下标%d,partitionArray个数%lu",self.blockIndex,(unsigned long)partitionArray.count);
+                    
+                    while (cmdIndex < cmdList.count) {
+                        if(self.errorTimes > 0){
+                            self.errorTimes = 0;
+                        }
+                        if(cmdIndex < cmdList.count){
+                            
+                            NSData *cmdData = [JCDataConvert hexToBytes:cmdList[cmdIndex]];
+                            [[CBLECenterMnger shareMnger] wristWriteOTAData:cmdData];
+                        }
+                        cmdIndex ++;
+                    }
+                }
+                self.blockIndex ++;
+            }
+        }
+        
+    } else if ( tool.ackData.srcCmd == OTA_RSP_BLOCK_INFO ){
+        self.partitionIndex++;
+        self.blockIndex = 0;
+        if(self.partitionIndex < self.fileManager.list.count){
+            //后面地址由前一个长度决定
+            Partition *prePartition = self.fileManager.list[self.partitionIndex-1];
+            self.flash_addr = self.flash_addr + prePartition.partitionLength + 16 - (prePartition.partitionLength+4)%4;
+            Partition *partition = self.fileManager.list[self.partitionIndex];
+            int checsum =[self getPartitionCheckSum:partition];
+            NSString *cmd = [self make_part_cmd:self.partitionIndex flash_addr:self.flash_addr run_addr:partition.address size:partition.partitionLength checksum:checsum];
+            
+            NSData *cmdData = [JCDataConvert hexToBytes:cmd];
+            [[CBLECenterMnger shareMnger] wristWriteOTACmd:cmdData bInOTA:YES];
+        }
+    } else if ( tool.ackData.srcCmd == OTA_RSP_PARTITION_INFO ){
+        NSLog(@" OTA升级结束🔚！");
+    }
+}
+
+
+
+
+-(int)getPartitionCheckSum:(Partition *)partition {
+    NSData *data = [JCDataConvert hexToBytes:partition.dataStr];
+    return [JCDataConvert checkSum:0 byte:data];
+}
+
+-(NSString *) make_part_cmd:(int)index flash_addr:(int)flash_addr run_addr:(NSString *)run_addr size:(int)size checksum:(int)checksum {
+    NSString *fa = [self strAdd0:[NSString stringWithFormat:@"%@",[JCDataConvert ToHex:flash_addr]] length:4];
+    NSString *ra = [self strAdd0:run_addr length:4];
+    NSString *sz = [self strAdd0:[NSString stringWithFormat:@"%@",[JCDataConvert ToHex:size]] length:4];
+    NSString *cs = [self strAdd0:[NSString stringWithFormat:@"%@",[JCDataConvert ToHex:checksum]] length:2];
+    NSString *Idindex = [self strAdd0:[NSString stringWithFormat:@"%@",[JCDataConvert ToHex:index]] length:1];
+    return [NSString stringWithFormat:@"%@%@%@%@%@%@",@"02",Idindex,fa,ra,sz,cs];
+}
+
+-(NSString *)strAdd0:(NSString *)str length:(int)lenth {
+    //不足8位 ，高位补0
+    int strLength = str.length;
+    for (int i=0;i<lenth*2-strLength;i++){
+        str = [NSString stringWithFormat:@"%@%@",@"0",str];
+    }
+    NSMutableData *mData = [NSMutableData data];
+    for (int i = 0; i < lenth ; i++) {
+        NSUInteger int1 = 0x00;
+        Byte bytes = int1 & 0xff;
+        [mData appendBytes:&bytes length:1];
+    }
+    //NSLog(@"转换前mData:%@",mData);
+    NSData *contentData = [JCDataConvert hexToBytes:str];
+    
+    Byte *byte= malloc(sizeof(Byte)*(lenth));
+    [mData getBytes:byte length:lenth];
+    NSUInteger length = contentData.length;
+    Byte *contentByte = (Byte *)[contentData bytes];
+    for (int j = 0; j < lenth; j++) {
+        NSUInteger int1 = contentByte[lenth-j-1];
+        Byte bytes = int1 & 0xff;
+        byte[j] = bytes;
+    }
+    
+    NSData *data = [[NSData alloc] initWithBytes:byte length:lenth];
+    //NSLog(@"转换后mData:%@",data);
+    NSString *contentStr = [JCDataConvert ConvertHexToString:data];//data转string
+    return contentStr;
+}
+
+
+@end
