@@ -8,7 +8,7 @@
   "name": "HP9蓝牙升级仪",
   "version": {
     "name": "1.0.2",
-    "code": 2
+    "code": 3
   },
   "description": "BLE升级仪初代测试",
   "developer": {

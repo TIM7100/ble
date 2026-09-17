@@ -427,7 +427,7 @@
 									
 									// 检查是否有数据
 									if (!res.result.data || res.result.data.length === 0) {
-										that.toast('未找到固件信息，请检查云数据库IAP集合');
+										that.toast(this.$t('fwOTA.no_firmware'));
 										this.lockInterface = false;
 										return;
 									}
@@ -436,14 +436,14 @@
 									that.fw_ota_url = res.result.data[0].URL || '';
 									
 									if (!that.fw_ota_url) {
-										that.toast('固件下载链接为空');
+										that.toast(this.$t('fwOTA.url_empty'));
 										this.lockInterface = false;
 										return;
 									}
 									
 									// 先对比固件本地OTA版本与云端版本，决定是否需要下载/升级
 									uni.showToast({
-										title: '正在检查固件版本...',
+										title: this.$t('fwOTA.checking_version'),
 										icon: 'none',
 										duration: 99999,
 									});
@@ -457,7 +457,7 @@
 											that.where();
 											return;
 										}
-										that.toast('已是最新版本，无需升级');
+										that.toast(this.$t('fwOTA.already_latest'));
 										that.fw_ota_mode = false;
 										that.lockInterface = false;
 										return;
@@ -465,7 +465,7 @@
 									
 									// 下载固件文件
 									uni.showToast({
-										title: '正在下载固件...',
+										title: this.$t('fwOTA.downloading'),
 										icon: 'none',
 										duration: 99999,
 									});
@@ -503,7 +503,7 @@
 														s.uuid.toLowerCase() === OTA_SVC.toLowerCase()
 													);
 													if (!otaSvc) {
-														that.toast('未发现OTA服务');
+														that.toast(this.$t('fwOTA.no_ota_service'));
 														that.lockInterface = false;
 														return;
 													}
@@ -519,7 +519,7 @@
 															);
 															if (!cmdChar && chars.length > 0) cmdChar = chars[0];
 															if (!cmdChar) {
-																that.toast('未找到OTA CMD特征值');
+																that.toast(this.$t('fwOTA.no_ota_cmd'));
 																that.lockInterface = false;
 																return;
 															}
@@ -532,40 +532,40 @@
 																value: hex2ArrayBuffer('0102'),
 																success: () => {
 																	console.log('OTA触发命令(0102)发送成功，设备将重启进入OTA模式');
-																	that.toast('设备进入OTA模式，正在重连...');
-																	// 设置重连标志，断开后自动重连并执行固件升级
-																	that.waiting_ota_reconnect = true;
+																	that.toast(this.$t('fwOTA.entering_ota'));
+																		// 设置重连标志，断开后自动重连并执行固件升级
+																		that.waiting_ota_reconnect = true;
 																},
 																fail: err => {
 																	console.error('OTA触发命令发送失败:', err);
-																	that.toast('触发OTA失败');
-																	that.lockInterface = false;
+																	that.toast(this.$t('fwOTA.trigger_fail'));
+																		that.lockInterface = false;
 																}
 															});
 														},
 														fail: err => {
 															console.error('获取OTA特征值失败:', err);
-															that.toast('获取OTA特征值失败');
-															that.lockInterface = false;
+															that.toast(this.$t('fwOTA.get_chars_fail'));
+																that.lockInterface = false;
 														}
 													});
 												},
 												fail: err => {
 													console.error('发现OTA服务失败:', err);
-													that.toast('发现OTA服务失败');
-													that.lockInterface = false;
+													that.toast(this.$t('fwOTA.find_service_fail'));
+														that.lockInterface = false;
 												}
 											});
 									}).catch(err => {
 										uni.hideToast();
-										that.toast('下载固件失败');
+										that.toast(this.$t('fwOTA.download_fail'));
 										this.lockInterface = false;
 									});
 									
 								}).catch(err => {
 									console.error('IAP查询失败:', err);
 									uni.hideToast();
-									that.toast('查询固件信息失败，请检查云数据库IAP集合');
+									that.toast(this.$t('fwOTA.query_fail'));
 									that.fw_ota_mode = false;
 									this.lockInterface = false;
 								});
@@ -663,7 +663,7 @@
 							
 						}) //下载数据包
 				
-						
+			
 					}
 					else 
 					{
@@ -1898,14 +1898,14 @@
 					console.log('reconnectForOTA, deviceId:', originalDeviceId);
 					
 					if (!originalDeviceId) {
-						that.toast('OTA重连失败：设备ID丢失');
+						that.toast(this.$t('fwOTA.reconnect_id_lost'));
 						that.ota_reconnecting = false;
 						that.lockInterface = false;
 						return;
 					}
 					
 					uni.showToast({
-						title: '正在重连OTA设备...',
+						title: this.$t('fwOTA.reconnecting'),
 						icon: 'loading',
 						duration: 99999
 					});
@@ -1937,7 +1937,7 @@
 										}).catch(err => {
 											uni.hideToast();
 											console.error('OTA服务发现失败:', err);
-											that.toast('OTA服务发现失败: ' + (err.errMsg || err));
+											that.toast(this.$t('fwOTA.service_discover_fail') + ': ' + (err.errMsg || err));
 											that.ota_reconnecting = false;
 											that.lockInterface = false;
 										});
@@ -1952,7 +1952,7 @@
 										tryConnect(originalId);
 									} else {
 										uni.hideToast();
-										that.toast('OTA重连失败，请靠近设备重试');
+										that.toast(this.$t('fwOTA.reconnect_fail'));
 										that.ota_reconnecting = false;
 										that.lockInterface = false;
 									}
@@ -2348,7 +2348,7 @@
 						that.pg_flag = true;
 						that.pgList = 0;
 						uni.showToast({
-							title: '正在升级固件...',
+							title: this.$t('fwOTA.upgrading'),
 							icon: 'none',
 							duration: 99999,
 						});
@@ -2416,9 +2416,9 @@
 						this.lockInterface = false;
 						// 自动链路下OTA完成后提示手动重连
 						if (this.auto_chain) {
-							that.toast('固件升级完成，请等待蓝牙断开后重新连接');
+							that.toast(this.$t('fwOTA.done_reconnect'));
 						} else {
-							that.toast('固件升级完成，设备重启中...');
+							that.toast(this.$t('fwOTA.done_reboot'));
 						}
 						
 					} catch(err) {
@@ -2430,7 +2430,7 @@
 						this.ota_reconnecting = false;
 						this.lockInterface = false;
 						let msg = (err && err.errMsg) ? err.errMsg : err;
-						that.toast('固件升级失败: ' + msg);
+						that.toast(this.$t('fwOTA.upgrade_fail') + ': ' + msg);
 					}
 				},
 			

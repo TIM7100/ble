@@ -86,5 +86,27 @@
 	
 	"Upgrade.Progress":"升级进度",
 	"Upgrade.Upgrading":"升级中，请勿断开与芯片连接",
-	"Upgrade.OTAUpgrading":"升级中，请勿断开蓝牙连接"
+	"Upgrade.OTAUpgrading":"升级中，请勿断开蓝牙连接",
+	
+	"fwOTA.no_firmware":"未找到固件信息，请检查云数据库IAP集合",
+	"fwOTA.url_empty":"固件下载链接为空",
+	"fwOTA.checking_version":"正在检查固件版本...",
+	"fwOTA.already_latest":"已是最新版本，无需升级",
+	"fwOTA.downloading":"正在下载固件...",
+	"fwOTA.no_ota_service":"未发现OTA服务",
+	"fwOTA.no_ota_cmd":"未找到OTA CMD特征值",
+	"fwOTA.entering_ota":"设备进入OTA模式，正在重连...",
+	"fwOTA.trigger_fail":"触发OTA失败",
+	"fwOTA.get_chars_fail":"获取OTA特征值失败",
+	"fwOTA.find_service_fail":"发现OTA服务失败",
+	"fwOTA.download_fail":"下载固件失败",
+	"fwOTA.query_fail":"查询固件信息失败，请检查云数据库IAP集合",
+	"fwOTA.reconnect_id_lost":"OTA重连失败：设备ID丢失",
+	"fwOTA.reconnecting":"正在重连OTA设备...",
+	"fwOTA.service_discover_fail":"OTA服务发现失败",
+	"fwOTA.reconnect_fail":"OTA重连失败，请靠近设备重试",
+	"fwOTA.upgrading":"正在升级固件...",
+	"fwOTA.done_reconnect":"固件升级完成，请等待蓝牙断开后重新连接",
+	"fwOTA.done_reboot":"固件升级完成，设备重启中...",
+	"fwOTA.upgrade_fail":"固件升级失败"
 }

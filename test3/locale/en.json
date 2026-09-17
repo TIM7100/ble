@@ -85,5 +85,27 @@
   
   "Upgrade.Progress":"Upgrade progress",
   "Upgrade.Upgrading":"During the upgrade, please do not disconnect from the chip",
-  "Upgrade.OTAUpgrading":"During the upgrade, please do not disconnect the Bluetooth connection"
+  "Upgrade.OTAUpgrading":"During the upgrade, please do not disconnect the Bluetooth connection",
+
+  "fwOTA.no_firmware":"No firmware info found, check the IAP collection",
+  "fwOTA.url_empty":"Firmware download link is empty",
+  "fwOTA.checking_version":"Checking firmware version...",
+  "fwOTA.already_latest":"Already on the latest version",
+  "fwOTA.downloading":"Downloading firmware...",
+  "fwOTA.no_ota_service":"OTA service not found",
+  "fwOTA.no_ota_cmd":"OTA CMD characteristic not found",
+  "fwOTA.entering_ota":"Device entering OTA mode, reconnecting...",
+  "fwOTA.trigger_fail":"Failed to trigger OTA",
+  "fwOTA.get_chars_fail":"Failed to get OTA characteristics",
+  "fwOTA.find_service_fail":"Failed to find OTA service",
+  "fwOTA.download_fail":"Firmware download failed",
+  "fwOTA.query_fail":"Firmware query failed, check the IAP collection",
+  "fwOTA.reconnect_id_lost":"OTA reconnect failed: device ID lost",
+  "fwOTA.reconnecting":"Reconnecting to OTA device...",
+  "fwOTA.service_discover_fail":"OTA service discover failed",
+  "fwOTA.reconnect_fail":"OTA reconnect failed, move closer and retry",
+  "fwOTA.upgrading":"Upgrading firmware...",
+  "fwOTA.done_reconnect":"Firmware upgrade complete, wait for Bluetooth to disconnect and reconnect",
+  "fwOTA.done_reboot":"Firmware upgrade complete, device restarting...",
+  "fwOTA.upgrade_fail":"Firmware upgrade failed"
 }

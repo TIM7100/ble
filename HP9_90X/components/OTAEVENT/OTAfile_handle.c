@@ -46,7 +46,7 @@ uint8 ota_set_local_version(const char *version, uint8 state)
     }
 
     // 写入"待定版本"地址(0x11042000)，由boot在OTA成功后将其提升为当前版本(0x11041000)。
-    // 因此Ota本身失败时不会误改当前版本。
+    // Ota失败时不会误改当前版本,但是OTA过程中断了会把程序弄跑飞
     uint8 v[OTA_VERSION_LEN] = {0};
     memcpy(v, version, OTA_VERSION_LEN);
 

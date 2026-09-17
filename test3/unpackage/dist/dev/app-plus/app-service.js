@@ -373,7 +373,7 @@ if (uni.restoreGlobal) {
   function I(e2) {
     return e2 && "string" == typeof e2 ? JSON.parse(e2) : e2;
   }
-  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), T = b, C = I('{"address":["127.0.0.1","172.18.1.145"],"servePort":7001,"debugPort":9001,"initialLaunchType":"local","skipFiles":["<node_internals>/**","E:/uniapp/HBuilderX/plugins/unicloud/**/*.js"]}'), P = I('[{"provider":"alipay","spaceName":"blep","spaceId":"env-00jy66zmic85","spaceAppId":"2021005146685771","accessKey":"1TS6tuR4aFJhd2bH","secretKey":"jmeOhiRl1LXuU8BM","endpoint":"https://env-00jy66zmic85.api-hz.cloudbasefunction.cn"}]') || [];
+  const S = true, b = "app", A = I(define_process_env_UNI_SECURE_NETWORK_CONFIG_default), T = b, C = I('{"address":["127.0.0.1","172.18.1.145"],"servePort":7000,"debugPort":9000,"initialLaunchType":"local","skipFiles":["<node_internals>/**","E:/uniapp/HBuilderX/plugins/unicloud/**/*.js"]}'), P = I('[{"provider":"alipay","spaceName":"blep","spaceId":"env-00jy66zmic85","spaceAppId":"2021005146685771","accessKey":"1TS6tuR4aFJhd2bH","secretKey":"jmeOhiRl1LXuU8BM","endpoint":"https://env-00jy66zmic85.api-hz.cloudbasefunction.cn"}]') || [];
   let E = "";
   try {
     E = "__UNI__F83CD93";
@@ -3291,19 +3291,19 @@ ${i3}
             formatAppLog("log", "at pages/index/index.vue:425", res);
             uni.hideToast();
             if (!res.result.data || res.result.data.length === 0) {
-              that2.toast("未找到固件信息，请检查云数据库IAP集合");
+              that2.toast(this.$t("fwOTA.no_firmware"));
               this.lockInterface = false;
               return;
             }
             that2.fw_ota_version = res.result.data[0].version || "";
             that2.fw_ota_url = res.result.data[0].URL || "";
             if (!that2.fw_ota_url) {
-              that2.toast("固件下载链接为空");
+              that2.toast(this.$t("fwOTA.url_empty"));
               this.lockInterface = false;
               return;
             }
             uni.showToast({
-              title: "正在检查固件版本...",
+              title: this.$t("fwOTA.checking_version"),
               icon: "none",
               duration: 99999
             });
@@ -3316,13 +3316,13 @@ ${i3}
                 that2.where();
                 return;
               }
-              that2.toast("已是最新版本，无需升级");
+              that2.toast(this.$t("fwOTA.already_latest"));
               that2.fw_ota_mode = false;
               that2.lockInterface = false;
               return;
             }
             uni.showToast({
-              title: "正在下载固件...",
+              title: this.$t("fwOTA.downloading"),
               icon: "none",
               duration: 99999
             });
@@ -3348,7 +3348,7 @@ ${i3}
                     (s2) => s2.uuid.toLowerCase() === OTA_SVC.toLowerCase()
                   );
                   if (!otaSvc) {
-                    that2.toast("未发现OTA服务");
+                    that2.toast(this.$t("fwOTA.no_ota_service"));
                     that2.lockInterface = false;
                     return;
                   }
@@ -3363,7 +3363,7 @@ ${i3}
                       if (!cmdChar && chars.length > 0)
                         cmdChar = chars[0];
                       if (!cmdChar) {
-                        that2.toast("未找到OTA CMD特征值");
+                        that2.toast(this.$t("fwOTA.no_ota_cmd"));
                         that2.lockInterface = false;
                         return;
                       }
@@ -3374,38 +3374,38 @@ ${i3}
                         value: hex2ArrayBuffer("0102"),
                         success: () => {
                           formatAppLog("log", "at pages/index/index.vue:534", "OTA触发命令(0102)发送成功，设备将重启进入OTA模式");
-                          that2.toast("设备进入OTA模式，正在重连...");
+                          that2.toast(this.$t("fwOTA.entering_ota"));
                           that2.waiting_ota_reconnect = true;
                         },
                         fail: (err) => {
                           formatAppLog("error", "at pages/index/index.vue:540", "OTA触发命令发送失败:", err);
-                          that2.toast("触发OTA失败");
+                          that2.toast(this.$t("fwOTA.trigger_fail"));
                           that2.lockInterface = false;
                         }
                       });
                     },
                     fail: (err) => {
                       formatAppLog("error", "at pages/index/index.vue:547", "获取OTA特征值失败:", err);
-                      that2.toast("获取OTA特征值失败");
+                      that2.toast(this.$t("fwOTA.get_chars_fail"));
                       that2.lockInterface = false;
                     }
                   });
                 },
                 fail: (err) => {
                   formatAppLog("error", "at pages/index/index.vue:554", "发现OTA服务失败:", err);
-                  that2.toast("发现OTA服务失败");
+                  that2.toast(this.$t("fwOTA.find_service_fail"));
                   that2.lockInterface = false;
                 }
               });
             }).catch((err) => {
               uni.hideToast();
-              that2.toast("下载固件失败");
+              that2.toast(this.$t("fwOTA.download_fail"));
               this.lockInterface = false;
             });
           }).catch((err) => {
             formatAppLog("error", "at pages/index/index.vue:566", "IAP查询失败:", err);
             uni.hideToast();
-            that2.toast("查询固件信息失败，请检查云数据库IAP集合");
+            that2.toast(this.$t("fwOTA.query_fail"));
             that2.fw_ota_mode = false;
             this.lockInterface = false;
           });
@@ -4286,13 +4286,13 @@ ${i3}
         let originalDeviceId = this.ota_reconnect_device_id;
         formatAppLog("log", "at pages/index/index.vue:1898", "reconnectForOTA, deviceId:", originalDeviceId);
         if (!originalDeviceId) {
-          that2.toast("OTA重连失败：设备ID丢失");
+          that2.toast(this.$t("fwOTA.reconnect_id_lost"));
           that2.ota_reconnecting = false;
           that2.lockInterface = false;
           return;
         }
         uni.showToast({
-          title: "正在重连OTA设备...",
+          title: this.$t("fwOTA.reconnecting"),
           icon: "loading",
           duration: 99999
         });
@@ -4316,7 +4316,7 @@ ${i3}
                 }).catch((err) => {
                   uni.hideToast();
                   formatAppLog("error", "at pages/index/index.vue:1939", "OTA服务发现失败:", err);
-                  that2.toast("OTA服务发现失败: " + (err.errMsg || err));
+                  that2.toast(this.$t("fwOTA.service_discover_fail") + ": " + (err.errMsg || err));
                   that2.ota_reconnecting = false;
                   that2.lockInterface = false;
                 });
@@ -4330,7 +4330,7 @@ ${i3}
                 tryConnect(originalId);
               } else {
                 uni.hideToast();
-                that2.toast("OTA重连失败，请靠近设备重试");
+                that2.toast(this.$t("fwOTA.reconnect_fail"));
                 that2.ota_reconnecting = false;
                 that2.lockInterface = false;
               }
@@ -4673,7 +4673,7 @@ ${i3}
           that2.pg_flag = true;
           that2.pgList = 0;
           uni.showToast({
-            title: "正在升级固件...",
+            title: this.$t("fwOTA.upgrading"),
             icon: "none",
             duration: 99999
           });
@@ -4724,9 +4724,9 @@ ${i3}
           this.ota_reconnecting = false;
           this.lockInterface = false;
           if (this.auto_chain) {
-            that2.toast("固件升级完成，请等待蓝牙断开后重新连接");
+            that2.toast(this.$t("fwOTA.done_reconnect"));
           } else {
-            that2.toast("固件升级完成，设备重启中...");
+            that2.toast(this.$t("fwOTA.done_reboot"));
           }
         } catch (err) {
           formatAppLog("error", "at pages/index/index.vue:2425", "固件OTA失败:", err);
@@ -4737,11 +4737,12 @@ ${i3}
           this.ota_reconnecting = false;
           this.lockInterface = false;
           let msg = err && err.errMsg ? err.errMsg : err;
-          that2.toast("固件升级失败: " + msg);
+          that2.toast(this.$t("fwOTA.upgrade_fail") + ": " + msg);
         }
       },
       // 清理下载目录中的文件（升级完成后调用，防止内存堆积）
       clearDownloadFiles() {
+        var that2 = this;
         var activeName = "";
         try {
           var activePath = getApp().globalData.path || "";
@@ -4751,23 +4752,53 @@ ${i3}
           }
         } catch (e2) {
         }
+        var removedNames = [];
         plus.io.requestFileSystem(plus.io.PUBLIC_DOWNLOADS, function(fs2) {
           var directoryReader = fs2.root.createReader();
           directoryReader.readEntries(function(entries) {
             for (var i2 = 0; i2 < entries.length; i2++) {
               var entry = entries[i2];
               if (entry.isFile && entry.name !== activeName) {
+                removedNames.push(entry.name);
                 entry.remove(function() {
-                  formatAppLog("log", "at pages/index/index.vue:2460", "已清理下载文件");
+                  formatAppLog("log", "at pages/index/index.vue:2463", "已清理下载文件");
                 }, function(e2) {
-                  formatAppLog("warn", "at pages/index/index.vue:2462", "清理下载文件失败:", e2.message);
+                  formatAppLog("warn", "at pages/index/index.vue:2465", "清理下载文件失败:", e2.message);
                 });
               }
             }
+            if (removedNames.length > 0) {
+              that2.clearCacheByRemovedFiles(removedNames);
+            }
           }, function(e2) {
-            formatAppLog("warn", "at pages/index/index.vue:2467", "读取下载目录失败:", e2.message);
+            formatAppLog("warn", "at pages/index/index.vue:2475", "读取下载目录失败:", e2.message);
           });
         });
+      },
+      // 根据被删除的文件名，清理storage中指向这些文件的型号缓存记录
+      clearCacheByRemovedFiles(removedNames) {
+        try {
+          var info = uni.getStorageInfoSync();
+          var keys = info.keys || [];
+          for (var k = 0; k < keys.length; k++) {
+            var key = keys[k];
+            try {
+              var cache2 = uni.getStorageSync(key);
+              if (!cache2 || !cache2.path)
+                continue;
+              var p2 = String(cache2.path);
+              var idx = p2.lastIndexOf("/");
+              var fname = idx >= 0 ? p2.substring(idx + 1) : p2;
+              if (removedNames.indexOf(fname) >= 0) {
+                uni.removeStorageSync(key);
+                formatAppLog("log", "at pages/index/index.vue:2495", "已同步清理型号缓存:", key);
+              }
+            } catch (e2) {
+            }
+          }
+        } catch (e2) {
+          formatAppLog("warn", "at pages/index/index.vue:2500", "同步清理缓存失败:", e2);
+        }
       },
       //保存下载的文件
       checkDownload() {
@@ -4776,12 +4807,12 @@ ${i3}
           directoryReader.readEntries(function(entries) {
             var i2;
             for (i2 = 0; i2 < entries.length; i2++) {
-              formatAppLog("log", "at pages/index/index.vue:2480", entries[i2].name);
+              formatAppLog("log", "at pages/index/index.vue:2512", entries[i2].name);
               entries[i2].name = i2;
             }
             uni.hideToast();
           }, function(e2) {
-            formatAppLog("log", "at pages/index/index.vue:2485", "Read entries failed: " + e2.message);
+            formatAppLog("log", "at pages/index/index.vue:2517", "Read entries failed: " + e2.message);
           });
         });
       },
@@ -4791,14 +4822,14 @@ ${i3}
         return new Promise((resolve, reject) => {
           var dtask = plus.downloader.createDownload(Download_url, {}, function(d2, status) {
             if (status == 200) {
-              formatAppLog("log", "at pages/index/index.vue:2500", "Download success: ");
-              formatAppLog("log", "at pages/index/index.vue:2501", d2);
+              formatAppLog("log", "at pages/index/index.vue:2532", "Download success: ");
+              formatAppLog("log", "at pages/index/index.vue:2533", d2);
               const path_buff = plus.io.convertLocalFileSystemURL(d2.filename);
-              formatAppLog("log", "at pages/index/index.vue:2505", path_buff);
+              formatAppLog("log", "at pages/index/index.vue:2537", path_buff);
               that2.checkDownload();
               resolve(path_buff);
             } else {
-              formatAppLog("log", "at pages/index/index.vue:2537", "Download failed: " + status);
+              formatAppLog("log", "at pages/index/index.vue:2569", "Download failed: " + status);
               uni.hideToast();
               that2.lockInterface = false;
               that2.toast(this.$t("Download.fail") + status);
@@ -5195,8 +5226,8 @@ ${i3}
   const name = "HP9蓝牙升级仪";
   const appid = "__UNI__F83CD93";
   const description = "BLE升级仪初代测试";
-  const versionName = "1.0.0";
-  const versionCode = 1;
+  const versionName = "1.0.1";
+  const versionCode = 2;
   const transformPx = false;
   const quickapp = {};
   const uniStatistics = {
@@ -6680,7 +6711,28 @@ ${i3}
     "notify.info_9": "The chip series does not match",
     "Upgrade.Progress": "Upgrade progress",
     "Upgrade.Upgrading": "During the upgrade, please do not disconnect from the chip",
-    "Upgrade.OTAUpgrading": "During the upgrade, please do not disconnect the Bluetooth connection"
+    "Upgrade.OTAUpgrading": "During the upgrade, please do not disconnect the Bluetooth connection",
+    "fwOTA.no_firmware": "No firmware info found, check the IAP collection",
+    "fwOTA.url_empty": "Firmware download link is empty",
+    "fwOTA.checking_version": "Checking firmware version...",
+    "fwOTA.already_latest": "Already on the latest version",
+    "fwOTA.downloading": "Downloading firmware...",
+    "fwOTA.no_ota_service": "OTA service not found",
+    "fwOTA.no_ota_cmd": "OTA CMD characteristic not found",
+    "fwOTA.entering_ota": "Device entering OTA mode, reconnecting...",
+    "fwOTA.trigger_fail": "Failed to trigger OTA",
+    "fwOTA.get_chars_fail": "Failed to get OTA characteristics",
+    "fwOTA.find_service_fail": "Failed to find OTA service",
+    "fwOTA.download_fail": "Firmware download failed",
+    "fwOTA.query_fail": "Firmware query failed, check the IAP collection",
+    "fwOTA.reconnect_id_lost": "OTA reconnect failed: device ID lost",
+    "fwOTA.reconnecting": "Reconnecting to OTA device...",
+    "fwOTA.service_discover_fail": "OTA service discover failed",
+    "fwOTA.reconnect_fail": "OTA reconnect failed, move closer and retry",
+    "fwOTA.upgrading": "Upgrading firmware...",
+    "fwOTA.done_reconnect": "Firmware upgrade complete, wait for Bluetooth to disconnect and reconnect",
+    "fwOTA.done_reboot": "Firmware upgrade complete, device restarting...",
+    "fwOTA.upgrade_fail": "Firmware upgrade failed"
   };
   const zhHans = {
     "locale.auto": "系统",
@@ -6761,7 +6813,28 @@ ${i3}
     "notify.info_9": "芯片系列不符",
     "Upgrade.Progress": "升级进度",
     "Upgrade.Upgrading": "升级中，请勿断开与芯片连接",
-    "Upgrade.OTAUpgrading": "升级中，请勿断开蓝牙连接"
+    "Upgrade.OTAUpgrading": "升级中，请勿断开蓝牙连接",
+    "fwOTA.no_firmware": "未找到固件信息，请检查云数据库IAP集合",
+    "fwOTA.url_empty": "固件下载链接为空",
+    "fwOTA.checking_version": "正在检查固件版本...",
+    "fwOTA.already_latest": "已是最新版本，无需升级",
+    "fwOTA.downloading": "正在下载固件...",
+    "fwOTA.no_ota_service": "未发现OTA服务",
+    "fwOTA.no_ota_cmd": "未找到OTA CMD特征值",
+    "fwOTA.entering_ota": "设备进入OTA模式，正在重连...",
+    "fwOTA.trigger_fail": "触发OTA失败",
+    "fwOTA.get_chars_fail": "获取OTA特征值失败",
+    "fwOTA.find_service_fail": "发现OTA服务失败",
+    "fwOTA.download_fail": "下载固件失败",
+    "fwOTA.query_fail": "查询固件信息失败，请检查云数据库IAP集合",
+    "fwOTA.reconnect_id_lost": "OTA重连失败：设备ID丢失",
+    "fwOTA.reconnecting": "正在重连OTA设备...",
+    "fwOTA.service_discover_fail": "OTA服务发现失败",
+    "fwOTA.reconnect_fail": "OTA重连失败，请靠近设备重试",
+    "fwOTA.upgrading": "正在升级固件...",
+    "fwOTA.done_reconnect": "固件升级完成，请等待蓝牙断开后重新连接",
+    "fwOTA.done_reboot": "固件升级完成，设备重启中...",
+    "fwOTA.upgrade_fail": "固件升级失败"
   };
   const messages = {
     en,

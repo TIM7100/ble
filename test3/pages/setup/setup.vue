@@ -185,7 +185,7 @@
 			        that.toast(that.$t('index.download_failed') + '[' + status + ']');
 			      }
 			    });
-			    // 尽力显示进度（不支持则忽略）
+			    // 进度条
 			    try {
 			      dtask.addEventListener('downloadprogress', function(e) {
 			        const total = Number(e && e.totalSize) || 0;
