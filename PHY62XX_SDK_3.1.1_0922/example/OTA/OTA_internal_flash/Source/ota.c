@@ -127,13 +127,11 @@ static uint8 advertData[] =
     GAP_ADTYPE_FLAGS,
     GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
 
-    9, //name
+    7, //name
     GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-    'P',
-    'P',
-    'l',
-    'u',
-    's',
+    '9',
+    '5',
+    'X',
     'O',
     'T',
     'A',
@@ -153,7 +151,7 @@ static uint8 advertData[] =
 };
 
 // Device name attribute value
-static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "PPlusOTA";
+static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "95XOTA";
 
 // GAP connection handle
 static uint16 gapConnHandle;

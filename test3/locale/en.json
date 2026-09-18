@@ -92,6 +92,7 @@
   "fwOTA.checking_version":"Checking firmware version...",
   "fwOTA.already_latest":"Already on the latest version",
   "fwOTA.downloading":"Downloading firmware...",
+  "fwOTA.download_failed":"Firmware download failed",
   "fwOTA.no_ota_service":"OTA service not found",
   "fwOTA.no_ota_cmd":"OTA CMD characteristic not found",
   "fwOTA.entering_ota":"Device entering OTA mode, reconnecting...",

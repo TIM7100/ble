@@ -105,10 +105,13 @@
 				<view v-for="(item, index) in devices" :key="index">
 					
 					<view v-if="showMaskType === 'device'">
-						<view v-if="item.name.indexOf('MX') >= 0">			<!-- 通过蓝牙设备广播的名字过滤 -->
-							
+						<view v-if="item.isMX || item.isOta">			<!-- 保留按名字/MAC过滤：MX 设备 + OTA(PPlusOTA/OTA MAC)设备 -->
 							<view class="uni-list-box" @click="tapQuery(item)">
-								<view class="uni-list_name">{{ item.name || item.localName }}</view>
+								<view class="uni-list_name">
+									{{ item.name || item.localName || '(无名称)' }}
+									<text v-if="item.isOta" class="otatag">OTA</text>
+									<text v-else-if="item.isMX" class="mxtag">MX</text>
+								</view>
 								<view class="uni-list_item">{{$t('BLE.RSSI')}}:{{ item.RSSI }}dBm</view>
 								<view class="uni-list_item">MAC:{{ item.deviceId }}</view>
 							</view>
@@ -116,7 +119,7 @@
 						</view>
 					
 					</view>
-	
+				
 				</view>
 				
 			</scroll-view>
@@ -169,6 +172,8 @@
 			ota_reconnecting: false,
 			// OTA重连用的设备ID（断开前保存）
 			ota_reconnect_device_id: '',
+			// 手动点选OTA(PPlusOTA)设备升级的标志：reconnectForOTA 连上后需先定版本+下载固件
+			ota_tap_direct: false,
 			// 固件OTA响应跟踪
 			ota_rsp: null,        // 最近收到的OTA响应字节
 			ota_rsp_ready: false, // OTA响应就绪标志
@@ -746,23 +751,32 @@
 			 */
 			getBluetoothDevices() {
 				let i = 0;
+				// 计算期望的 OTA MAC（原MAC末字节+1），用于识别 OTA 设备
+				let expectOtaMac = '';
+				try {
+					if (this.ota_reconnect_device_id) {
+						expectOtaMac = this.getOTAMacAddress(this.ota_reconnect_device_id).toUpperCase();
+					}
+				} catch (e) {}
 				// this.devices=[];
 				uni.getBluetoothDevices({
 					success: res => {
 						
 						this.newDeviceLoad = false;
 						// this.devices=[];
-						res.devices.forEach(res => {
-							// console.log('获取蓝牙设备成功:' + res.errMsg);
-							// console.log("发现的蓝牙设备",res);
-
-							// console.log(JSON.stringify(res))
-							if (res.name.indexOf('MX') >= 0)
-							{
-								console.log("发现的蓝牙设备",res);
-								this.devices[i++] = res;					
+						res.devices.forEach(dev => {
+							// 保留按名字过滤：MX 设备 + OTA 设备(90XOTA/95XOTA/97XOTA 或 OTA MAC)
+							let name = dev.name || '';
+							dev.isMX = (name.indexOf('MX') >= 0);
+							// OTA设备名结尾为 XOTA（如90XOTA/95XOTA/97XOTA）
+							dev.isOta = (/XOTA$/.test(name)) ||
+								(expectOtaMac && dev.deviceId && dev.deviceId.toUpperCase() === expectOtaMac);
+							if (dev.isMX || dev.isOta) {
+								console.log('发现的蓝牙设备', dev);
+								this.devices[i++] = dev;
+							} else {
+								console.log('跳过(非目标设备) name=' + name + ' MAC=' + dev.deviceId);
 							}
-		
 						})
 
 						// console.log('获取蓝牙设备成功:' + res.errMsg);
@@ -865,6 +879,27 @@
 			
 			tapQuery(devices) {
 				if (this.showMaskType === 'device') {
+					// 点选 OTA(90XOTA/95XOTA/97XOTA)设备 → 直接走固件OTA升级(连OTA MAC, 发现FW OTA服务, TxUpdate_Firmware)
+					if (devices.isOta) {
+						if (this.equipment.length > 0) {
+							this.equipment[0] = devices;
+						} else {
+							this.equipment.push(devices);
+						}
+						this.maskShow = false;
+						// 依据OTA设备名直接推导系列(chip_name)：90XOTA→90X、95XOTA→95X、97XOTA→97X
+						// 后续 prepareFirmwareForOta 按该系列查云端IAP下载对应最新固件，不再依赖历史连接残留
+						if (devices.name) {
+							this.chip_name = String(devices.name).replace(/OTA$/i, '').trim();
+						}
+						// 手动固件OTA必须打开标志，否则设备返回的0x81/0x84/0x83等通知不会被解析
+						this.fw_ota_mode = true;
+						// 依据本设备(OTA MAC=原MAC+1)反推原MAC，reconnectForOTA 会优先连该OTA MAC
+						this.ota_reconnect_device_id = this.getOriginalMac(devices.deviceId);
+						this.ota_tap_direct = true;   // 手动点选OTA设备：连上后需先定版本+下载固件
+						this.reconnectForOTA();
+						return;
+					}
 					// this.$set(this.disabled, 4, false);
 					if (this.equipment.length > 0) {
 						this.equipment[0] = devices;
@@ -1967,20 +2002,30 @@
 									that.setBLEMTU(that.MTU);
 									
 									setTimeout(() => {
-										// 发现OTA服务并获取特征值
-										that.findFirmwareOTAService().then(() => {
-											uni.hideToast();
-											console.log('OTA服务就绪，开始固件升级');
-											// 开始固件OTA升级
-											that.TxUpdate_Firmware();
-										}).catch(err => {
-											uni.hideToast();
-											console.error('OTA服务发现失败:', err);
-											that.toast(this.$t('fwOTA.service_discover_fail') + ': ' + (err.errMsg || err));
-											that.ota_reconnecting = false;
-											that.lockInterface = false;
-										});
-									}, 1500);
+									// 发现OTA服务并获取特征值
+									that.findFirmwareOTAService().then(async () => {
+										uni.hideToast();
+										console.log('OTA服务就绪，开始固件升级');
+										// 手动点选OTA设备时，先查云端确定并下载目标固件，再执行升级
+										if (that.ota_tap_direct) {
+											that.ota_tap_direct = false;
+											const ok = await that.prepareFirmwareForOta();
+											if (!ok) {
+												that.ota_reconnecting = false;
+												that.lockInterface = false;
+												return;
+											}
+										}
+										// 开始固件OTA升级
+										that.TxUpdate_Firmware();
+									}).catch(err => {
+										uni.hideToast();
+										console.error('OTA服务发现失败:', err);
+										that.toast(this.$t('fwOTA.service_discover_fail') + ': ' + (err.errMsg || err));
+										that.ota_reconnecting = false;
+										that.lockInterface = false;
+									});
+								}, 1500);
 								},
 								fail: e => {
 									console.error('连接失败 deviceId=' + dId + ':', e);
@@ -2002,6 +2047,59 @@
 						tryConnect(that.getOTAMacAddress(that.ota_reconnect_device_id));
 				},
 				
+				// 手动点选OTA设备时：先查云端IAP确定目标固件并下载到 globalData.path，供 TxUpdate_Firmware/getbindata 读取
+				async prepareFirmwareForOta() {
+					var that = this;
+					try {
+						if (!that.chip_name) {
+							that.toast(this.$t('fwOTA.no_firmware'));
+							return false;
+						}
+						const db = uniCloud.database();
+						let res = await db.collection('IAP').where({
+							name: new RegExp('^' + that.chip_name)
+						}).get();
+						if (!res.result.data || res.result.data.length === 0) {
+							that.toast(this.$t('fwOTA.no_firmware'));
+							return false;
+						}
+						that.fw_ota_version = res.result.data[0].version || '';
+						that.fw_ota_url = res.result.data[0].URL || '';
+						if (!that.fw_ota_url) {
+							that.toast(this.$t('fwOTA.url_empty'));
+							return false;
+						}
+						// OTA模式下不对比版本，直接下载该系列最新固件并升级
+						// 下载目标固件文件到本地
+						uni.showToast({ title: this.$t('fwOTA.downloading'), icon: 'none', duration: 99999 });
+						const path_data = await that.createDownload(that.fw_ota_url);
+						getApp().globalData.path = path_data;
+						uni.hideToast();
+						return true;
+					} catch (e) {
+						console.error('准备固件失败:', e);
+						uni.hideToast();
+						that.toast(this.$t('fwOTA.download_failed'));
+						return false;
+					}
+				},
+
+				// 由本设备(OTA MAC)反推原始MAC（末字节-1），供点选OTA设备后复位原设备ID
+				getOriginalMac(mac) {
+					try {
+						let clean = mac.replace(/:/g, '').replace(/-/g, '');
+						if (clean.length === 12) {
+							let lastByte = parseInt(clean.substr(10, 2), 16);
+							let newLast = ((lastByte - 1) & 0xFF).toString(16).toUpperCase();
+							if (newLast.length < 2) newLast = '0' + newLast;
+							return (clean.substr(0, 10) + newLast).match(/.{2}/g).join(':');
+						}
+					} catch(e) {
+						console.error('计算原始MAC失败:', e);
+					}
+					return mac; // 失败则返回原地址
+				},
+
 				// 计算OTA bootloader的MAC地址（末字节+1）
 				getOTAMacAddress(mac) {
 					// MAC格式: AA:BB:CC:DD:EE:FF 或 AABBCCDDEEFF
@@ -3055,6 +3153,24 @@
 		font-size: 24rpx;
 		color: #555;
 		line-height: 1.5;
+	}
+	.otatag {
+		font-size: 24rpx;
+		color: #fff;
+		background: #fa5151;
+		border-radius: 6rpx;
+		padding: 2rpx 10rpx;
+		margin-left: 10rpx;
+		vertical-align: middle;
+	}
+	.mxtag {
+		font-size: 24rpx;
+		color: #fff;
+		background: #07c160;
+		border-radius: 6rpx;
+		padding: 2rpx 10rpx;
+		margin-left: 10rpx;
+		vertical-align: middle;
 	}
 	.uni-mask {
 		position: fixed;

@@ -93,6 +93,7 @@
 	"fwOTA.checking_version":"正在检查固件版本...",
 	"fwOTA.already_latest":"已是最新版本，无需升级",
 	"fwOTA.downloading":"正在下载固件...",
+	"fwOTA.download_failed":"固件下载失败",
 	"fwOTA.no_ota_service":"未发现OTA服务",
 	"fwOTA.no_ota_cmd":"未找到OTA CMD特征值",
 	"fwOTA.entering_ota":"设备进入OTA模式，正在重连...",

@@ -10,4 +10,5 @@ JLinkLog.txt
 *.o
 *.axf
 *.elf
-*.bin
+.trae
+

@@ -228,6 +228,24 @@
 		color: #555;
 		line-height: 1.5;
 }
+.otatag {
+		font-size: 0.75rem;
+		color: #fff;
+		background: #fa5151;
+		border-radius: 0.1875rem;
+		padding: 0.0625rem 0.3125rem;
+		margin-left: 0.3125rem;
+		vertical-align: middle;
+}
+.mxtag {
+		font-size: 0.75rem;
+		color: #fff;
+		background: #07c160;
+		border-radius: 0.1875rem;
+		padding: 0.0625rem 0.3125rem;
+		margin-left: 0.3125rem;
+		vertical-align: middle;
+}
 .uni-mask {
 		position: fixed;
 		top: 0;
